@@ -19,7 +19,7 @@ After that, I plan to switch over and use GRUB as a bootloader. And continue fro
 ## TL;DR
 1. Write a minimal bootable image.
 2. Bootloader that prints `Hello World` in 16-bit real mode.
-2. Manually switch to 32-bin protected mode and print `Hello World`.
+3. Manually switch to 32-bin protected mode and print `Hello World`.
 3. Manually switch to 64-bin long mode
 4. Use GRUB as bootloader and print `Hello World`.
 5. Switch to long mode (again).

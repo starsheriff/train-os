@@ -31,3 +31,20 @@ of _figuring out_ what we have to do _from generic sources_.
 I can recommend this approach since the learning experience is much better. At least for
 me.
 
+# The Multiboot Header
+Section 1.6 of the multiboot specification states that:
+
+> Multiboot-compliant  OS  images  always  contain  a  magic Multiboot
+> header (seeSection  3.1  [OSimage  format],  page  5),  which  allows  the  boot
+> loader  to  load  the  image  without  havingto  understand  numerous  a.out  variants
+> or  other  executable  formats.
+
+Furthermore,
+
+> This  magic header does not need to be at the very beginning of the executable file,
+> so kernel images can still conform to the local a.out format variant in addition to
+> being Multiboot-compliant.
+
+So, next step is to figure out _how_ this multiboot header should be constructed and
+second where we have to put it or _how_ we have to link it so that the bootloader can
+find it.
