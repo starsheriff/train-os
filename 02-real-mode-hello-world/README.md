@@ -50,7 +50,7 @@ not find more thorough documentation.
 
 ## Which function can we use to print to the screen?
 How the heck can we print something to screen? The immediate questions
-I hade were:
+I had were:
 
 1. I need an overview of the available functionality.
 2. Which function can I use to print to the screen?
