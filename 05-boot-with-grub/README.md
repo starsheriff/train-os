@@ -48,3 +48,5 @@ Furthermore,
 So, next step is to figure out _how_ this multiboot header should be constructed and
 second where we have to put it or _how_ we have to link it so that the bootloader can
 find it.
+
+## Header Layout
