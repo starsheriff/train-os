@@ -18,9 +18,9 @@ value that is often missing in other tutorials.
 # Getting Started
 So, how did I learn about BIOS functions at all? Well first read
 
-this: https://wiki.osdev.org/BIOS
-this: https://en.wikibooks.org/wiki/X86_Assembly/Bootloaders
-and chapters 2 and 3.1 of this: http://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf
+* this: https://wiki.osdev.org/BIOS
+* this: https://en.wikibooks.org/wiki/X86_Assembly/Bootloaders
+* and chapters 2 and 3.1 of this: http://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf
 
 These sources explain the boot process and also explain the conept of BIOS functions or
 BIOS interrupt calls. It is very similar to syscalls. You write a value to a specific
@@ -85,4 +85,8 @@ Desc: Display a character on the screen, advancing the cursor and scrolling the 
 Notes: Characters 07h (BEL), 08h (BS), 0Ah (LF), and 0Dh (CR) are interpreted and do the expected things. IBM PC ROMs dated 1981/4/24 and 1981/10/19 require that BH be the same as the current active page 
 ```
 
+# Summary
+We are still in 16-bit real mode, but managed to invoce a BIOS function by causing an
+software interrupt and setting the correct registers to the correct values.
 
+We also learned that it is quite hard to find good resources for this particular topic.
