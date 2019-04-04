@@ -103,7 +103,7 @@ The fourth part requires to calculate a checksum. The standard defines this as
 > magic fields (i.e. ‘magic’, ‘architecture’ and ‘header_length’), must have a 32-bit
 > unsigned sum of zero. 
 
-```
+```assembly
 header_start:
 	dd 0xe85250d6
 	dd 0
