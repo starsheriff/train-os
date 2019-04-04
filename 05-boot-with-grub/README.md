@@ -111,3 +111,25 @@ header_start:
 	dd 0xFFFFFFFF - (0xe85250d6 + 0 + (header_end - header_start) - 1)
 header_end:
 ```
+
+### Gotcha! We need _at least_ one header tag.
+This was not obvious and I just discovered that by chance. Not sure how much pain it
+that would have caused to find later on.
+
+Section [3.1.3](https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html#Header-tags)
+says that
+
+> Tags are terminated by a tag of type ‘0’ and size ‘8’. 
+
+This means we have to add one tag to our header file. I assume otherwise GRUB not be
+able to find the end of the header.
+
+So, we follow the spec and add the end header
+
+```assembly
+dw 0 ; 16-bit, type `0`
+dw 0 ; 16-bit, flags (assuming they should be zero)
+dd 8 ; 32-bit, 8 (preceeded by two 4 byte fields)
+```
+
+That's it. I _think_ that the header is complete now.
