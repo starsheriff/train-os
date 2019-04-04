@@ -50,3 +50,28 @@ second where we have to put it or _how_ we have to link it so that the bootloade
 find it.
 
 ## Header Layout
+Section [3.1.1](https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html#Header-layout)
+of the multiboot specification describes the header layout we have to follow:
+
+| Offset | Type | Field | Name | Note |
+|--------|------|-------|------|------|
+| 0 | `u32` | `magic` | required |
+| 4 | `u32` | `architecture` | required |
+| 8 | `u32` | `headerlength` | required |
+| 12 | `u32` | `checksum` | required | 
+| 16-XX | | `tags` | required |
+
+That does not look too bad. Not overly complicated; actually that looks quite straight
+forward. Also it looks like the header supports arbitrary `tags` and that the header
+does not have a fixed size.
+
+Sidenote: You might have noticed that the link to the multiboot specification posted
+above and the link in this section are called multiboot and multiboot2 specification.
+I still don't know the difference (if any), but we will figure that out along the way.
+
+Let's create a new asm file called `multiboot_header.asm` and construct the required
+fields. The first one is easy just add a 32-bit constant
+
+```assembly
+dd 0xe85250d6
+```
