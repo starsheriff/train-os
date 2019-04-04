@@ -75,3 +75,39 @@ fields. The first one is easy just add a 32-bit constant
 ```assembly
 dd 0xe85250d6
 ```
+
+The second field has to be set to `0` indicating that we want to boot into 32-bit mode
+on a i386 architecture; we cannot chose 64-bit yet, that is not supported by the
+standard.
+
+```assembly
+dd 0xe85250d6
+dd 0
+```
+
+The third field requires that we add tags at the beginning and the end of the section
+to calculate the length of the header. Hard coding the length would be a bad idea and
+difficult to maintain. 
+
+```assembly
+header_start:
+	dd 0xe85250d6
+	dd 0
+	dd header_end - header_start
+header_end:
+```
+
+The fourth part requires to calculate a checksum. The standard defines this as
+
+> The field ‘checksum’ is a 32-bit unsigned value which, when added to the other 
+> magic fields (i.e. ‘magic’, ‘architecture’ and ‘header_length’), must have a 32-bit
+> unsigned sum of zero. 
+
+```
+header_start:
+	dd 0xe85250d6
+	dd 0
+	dd header_end - header_start
+	dd 0xFFFFFFFF - (0xe85250d6 + 0 + (header_end - header_start) - 1)
+header_end:
+```
