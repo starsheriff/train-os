@@ -4,10 +4,12 @@
 ; Specification:
 ; https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html#OS-image-format
 
+section .multiboot_header
 header_start:
     ; First Field `magic`
     ; The header has to start with the magic number at offset 0.
-    dd 0xe85250d6
+    MAGIC equ 0xe85250d6
+    dd MAGIC
     
     ; Second Field `architecture`
     ;
@@ -24,10 +26,7 @@ header_start:
     dd header_end - header_start
 
     ; Fourthf Field `checksum`
-    ;
-    ; the `-1` is required to adjust the total sum in parentheses such that the total
-    ; sum actually overflows and ends up as zero (and not as 0xFFFFFFFF)
-    dd 0xFFFFFFFF - (0xe85250d6 + 0 + (header_end - header_start) - 1)
+    dd - (MAGIC + 0 + (header_end - header_start))
 
     ; Mandatory end tag
     dw 0 ; 16-bit, type `0`

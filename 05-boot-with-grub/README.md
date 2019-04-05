@@ -73,6 +73,7 @@ Let's create a new asm file called `multiboot_header.asm` and construct the requ
 fields. The first one is easy just add a 32-bit constant
 
 ```assembly
+; multiboot_header.asm
 dd 0xe85250d6
 ```
 
@@ -81,6 +82,7 @@ on a i386 architecture; we cannot chose 64-bit yet, that is not supported by the
 standard.
 
 ```assembly
+; multiboot_header.asm
 dd 0xe85250d6
 dd 0
 ```
@@ -90,6 +92,7 @@ to calculate the length of the header. Hard coding the length would be a bad ide
 difficult to maintain. 
 
 ```assembly
+; multiboot_header.asm
 header_start:
 	dd 0xe85250d6
 	dd 0
@@ -104,11 +107,12 @@ The fourth part requires to calculate a checksum. The standard defines this as
 > unsigned sum of zero. 
 
 ```assembly
+; multiboot_header.asm
 header_start:
 	dd 0xe85250d6
 	dd 0
 	dd header_end - header_start
-	dd 0xffffffff - (0xe85250d6 + 0 + (header_end - header_start) - 1)
+	dd - (0xe85250d6 + 0 + (header_end - header_start))
 header_end:
 ```
 
@@ -127,9 +131,28 @@ able to find the end of the header.
 So, we follow the spec and add the end header
 
 ```assembly
+; multiboot_header.asm
 dw 0 ; 16-bit, type `0`
 dw 0 ; 16-bit, flags (assuming they should be zero)
 dd 8 ; 32-bit, 8 (preceeded by two 4 byte fields)
 ```
 
 That's it. I _think_ that the header is complete now.
+
+# Something to Boot
+Now we need a minimal "kernel" that we can actually try to boot. We have to be aware of
+that GRUB will boot into the 32-bit protected mode. This means it is not possible to use
+the BIOS functions anymore.
+
+Instead, we now have the frame buffer available at our hands, which is nice. So, to give
+us _some_ visual feedback that we did boot successfully, we just write a few bytes
+directly to it, e.g. `X`.
+
+Let's create a new asm file called `boot.asm`
+
+
+# TODO
+tool: readelf
+linker script
+grub commands
+Automation -> Makefile
