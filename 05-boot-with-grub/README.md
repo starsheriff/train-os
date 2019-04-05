@@ -150,9 +150,46 @@ directly to it, e.g. `X`.
 
 Let's create a new asm file called `boot.asm`
 
+# Playing Around
+Now, we can easily play around. Since we have automated the whole build, the dev cycle
+is really fast; just run `make run` to start qemu with a freshly built image.
+
+For me, since I don't have much experience with assembler I mainly changed the two lines
+printing our two characters `OK`
+
+```
+mov word [0xb8000], 0x0e4f ; 'O', yellow on black
+mov word [0xb8002], 0x0e4b ; 'K', yellow on black
+```
+
+What happens if you change the lines to the following? Explore, and try to understand.
+I will leave you alone on that one.
+
+```
+mov dword [0xb8000], 0x0e4f
+mov word [0xb8002], 0x0e4b
+```
+
+```
+mov word [0xb8000], 0x0e4f
+mov word [0xb8001], 0x0e4b
+```
+
+```
+mov word [0xb8000], 0x0e4f
+mov word [0xb8006], 0x0e4b
+```
+
+```
+mov word [0xb8000], 0x0e4f
+mov dword [0xb8002], 0x0e4b
+```
+
 
 # TODO
-tool: readelf
+tool: readelf -> check the start address and entrypoint
+
 linker script
 grub commands
 Automation -> Makefile
+
