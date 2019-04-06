@@ -20,14 +20,14 @@ After that, I plan to switch over and use GRUB as a bootloader. And continue fro
 1. Write a minimal bootable image.
 2. Bootloader that prints `Hello World` in 16-bit real mode.
 3. Manually switch to 32-bin protected mode and print `Hello World`.
-3. Manually switch to 64-bin long mode
-4. Use GRUB as bootloader and print `Hello World`.
-5. Switch to long mode (again).
-6. Jump into `C`, print `Hello World`.
-7. Implement VGA video driver.
-8. Handle interrupts/exceptions
-9. Implement memory paging.
-10. Remap Kernel
+4. Manually switch to 64-bin long mode
+5. Use GRUB as bootloader and print `Hello World`.
+6. Switch to long mode (again).
+7. Jump into `C`, print `Hello World`.
+8. Implement VGA video driver.
+9. Handle interrupts/exceptions
+10. Implement memory paging.
+11. Remap Kernel
 
 ### Later on...
 * filesystem

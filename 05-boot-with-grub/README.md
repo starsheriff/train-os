@@ -146,9 +146,62 @@ the BIOS functions anymore.
 
 Instead, we now have the frame buffer available at our hands, which is nice. So, to give
 us _some_ visual feedback that we did boot successfully, we just write a few bytes
-directly to it, e.g. `X`.
+directly to the vga memory, e.g. `OK`.
 
-Let's create a new asm file called `boot.asm`
+Let's create a new asm file called `boot.asm`, the only thing we do is to print the
+two letters `OK` in yellow on black background.
+
+*How do we do that?*
+It seems like "everybody" just knows that writing bytes to the memory address `0xb8000`
+prints ascii characters in a 80x25 grid on the screen. Well, _how_ can you find this from
+specs? Who specs it? Which _part_ of the computer is responsible for it? The vendor or
+is it part of the CPU architecture, i.e. x86_64? I have no idea.
+
+Searching on the web, I found a wiki page on [osdev.org](https://wiki.osdev.org/Text_UI#Video_Memory),
+but there are also no references to where you would find that information. However,
+it explains the bits and their meaning a bit more.
+
+From the osdev page, we learn that each character to print uses two bytes. One for the
+color code and one for the ascii code to print. I give up to dig deeper on that one for
+now and just use the information from the osdev page.
+
+Now that we also "know" that we have to write to the memory area beginning at `0xb8000`
+to print characters and that the byte `0x0e` prints the character in yellow on black
+background and that the ascii codes for the characters 'O' and 'K' are `0x4f` and `0x4b`.
+We can finally put together a simple assembly file. This file will then be linked with
+the multiboot header and loaded by GRUB.
+
+```
+; boot.asm
+
+; The label start is our entry point. We have to make it
+; public so that the linker can use it.
+global start
+
+section .text
+
+; we are still in 32-bit protected mode so we have to use
+; 32-bit wide instructions
+bits 32
+
+start:
+    mov word [0xb8000], 0x0e4f ; 'O', yellow on black
+    mov word [0xb8002], 0x0e4b ; 'K', yellow on black
+    hlt
+``` 
+
+# Linking the kernel
+TODO: linker script
+
+# ELF? Entry Point
+TODO: readelf tool and explain entry point
+
+# Building a bootable image
+TODO: grub process
+
+# Automation (Makefile)
+
+TODO: Summarize makefile
 
 # Playing Around
 Now, we can easily play around. Since we have automated the whole build, the dev cycle
@@ -192,6 +245,6 @@ tool: readelf -> check the start address and entrypoint
 linker script
 grub commands
 Automation -> Makefile
-do we have a stack already?
-Why does C need a stack?
+do we have a stack already? -> next
+Why does C need a stack? -> next
 How do we read memory information?
