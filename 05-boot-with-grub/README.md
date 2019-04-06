@@ -192,4 +192,6 @@ tool: readelf -> check the start address and entrypoint
 linker script
 grub commands
 Automation -> Makefile
-
+do we have a stack already?
+Why does C need a stack?
+How do we read memory information?
