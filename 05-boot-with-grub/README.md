@@ -171,7 +171,7 @@ background and that the ascii codes for the characters 'O' and 'K' are `0x4f` an
 We can finally put together a simple assembly file. This file will then be linked with
 the multiboot header and loaded by GRUB.
 
-```
+```assembly
 ; boot.asm
 
 ; The label start is our entry point. We have to make it
