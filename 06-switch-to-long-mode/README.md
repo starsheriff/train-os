@@ -181,8 +181,14 @@ be honest I don't know how to roll this part here without using some knowledge o
 2. We will remap, i.e. implement the paging mechanism, for our kernel later in a much
   more sophisticated way. So 1 GiB is definitely not required.
 
-### Reserve Memory for Page Tables
+### Enable 2 MiB Physical Page Size
+From table 5.1 we know that we have to set `PDE.PS=1` and `PDPE.PS=0` to enable 2 MiB
+physical pages. Both flags are set using bit number 7 in the respective _page table
+entries_. Note! `PDE` and `PDPE` are _NOT_ registers but, rather cumbersome names for
+different levels of the page tables. `PDPE` is page table level 3 and `PDE` level 2.
 
+### Reserve Memory for Page Tables
+The idea is that we utilize large page tables, 
 
 
 

@@ -25,11 +25,12 @@ start:
     and eax, (1 << 5)
     mov cr4, eax
 
- 
+    ; Step 3: Configure 2 MiB physical pages
+    mov eax, pde
+
     mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     mov word [0xb8002], 0x0e4b ; 'K', yellow on black
     hlt
-
 
 section .bss
 ; must be page aligned
