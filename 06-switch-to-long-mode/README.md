@@ -44,8 +44,9 @@ leave the path and diverge a bit from the tutorial you are following, questions 
 pop up and you _will_ have to solve them. Knowing _where_ to find this kind of information
 is way more satisfying and robust than relying on StackOverflow or Google. My 2 cents.
 
+# Long Mode Activation
 
-# Disable Paging (if enabled)
+## Disable Paging (if enabled)
 Back to business, the first thing we have to is to disable paging. Do disable paging,
 the manual describes, we have to set register `CR0.PG` to `0`.
 
@@ -98,7 +99,49 @@ mov cr0, eax
 
 Now, bit 31 of `cr0`, `cr0.pg`, is cleared.
 
-# Next
+# Enable Physical Address Extension
+Next, we will enable the physical address extension. Again, the programmers manual is
+our friend:
+
+> Physical-address extensions are controlled by the PAE bit in CR4 (bit 5). When CR4.PAE
+> is set to 1, physical-address extensions are enabled. When CR4.PAE is cleared to 0,
+> physical-address extensions are disabled.
+> 
+> Setting CR4.PAE = 1 enables virtual addresses to be translated into physical addresses
+> up to 52 bits long. This is accomplished by doubling the size of paging data-structure
+> entries from 32 bits to 64 bits to accommodate the larger physical base-addresses for
+> physical-pages.
+
+
+This means we have to set bit 5 in `cr4`. We follow the same approach as before. First,
+we copy the register into `eax`. Then, we set bit 5 in `eax` and then we copy the new
+value from `eax` to `cr4`.
+
+```assembly
+; Step 2: Enable Physical Address Extension
+mov eax, cr4
+and eax, (1 << 5)
+mov cr4, eax
+```
+
+## What did we just do?
+So, what is this bit doing exactly? I don't know in detail. What the manual tells me though
+is that a) up intil now, the cpu was still addressing its memory using 32-bit addresses.
+This means it is physically _impossible_ to address more than 4 GiB. The processor "only"
+had 2^32 addresses.
+
+Also, keep in mind that we are _really_ at hardware level now. We are actually
+configuring the cpu. Setting the bit will tell the cpu that from now it should use 64-bit
+physical addresses. This might have a lot of implications on it's internal workings.
+Some of these will even become visible to us. First of all we will be able to use 64-bit
+addresses ourselves and second we will have to use a page table entry layout that matches
+this mode; i.e. the page table entry is 64 bits long.
+
+## Virtual Addresses, Page Tables?!
+
+
+
+# Scratchpad/Notes
 
 
 From the AMD progammers manual, section 14.6:
