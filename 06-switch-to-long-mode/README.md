@@ -138,11 +138,55 @@ addresses ourselves and second we will have to use a page table entry layout tha
 this mode; i.e. the page table entry is 64 bits long.
 
 ## Virtual Addresses, Page Tables?!
+We have heard about virtual and physical addresses the first time now and will have to
+deal with them for the next step. Paging itself is not a difficult _concept_, but the
+implementation is actually quite intricate.
+
+Here are a few points that I missed when reading the first time about paging which I
+try to address. 
+
+...
+..
+* It is an essential part of the chips architecture. It is not something we are free to
+  design/chose in software. The chip _will_ to the translation from a virtual address
+  to the physical address no matter what.
+
+
+I really had to do a few passes to understand paging and get my head properly around it.
+It was also very helpful to use several different sources, usually they complement each
+other and fill each others gaps.
+
+## Identity Map Page Tables
+The next step is to set the `cr3` register with the _physical_ base address of a level
+4 page table. To do that, we have to understand page tables a little bit. I want to go
+into it in more detail later. For now, lets try to find the easiest possible
+implementation.
+
+The paging mechanism is explained in the programmers manual in section 5. The explanation
+is actually quite good, but don't get grustrated if you don't get it right away. There
+is a lot to grasp and many implementaitons are possible.
+
+Table 5.1 gives a good overview and helps us to narrow down our choices. First, we want
+to enable long mode, so only the top row is relevant (we already enabled `cr4.pae`).
+Then, given that we want to have a simple solution a 2 MiB physical page size seems to
+be okish.
+
+Why? I guess it is not really obvious unless you already know what we are aiming for. To
+be honest I don't know how to roll this part here without using some knowledge or plan.
+
+1. A _simple_ solution will avoid that we have to map several pages, so we would like to
+  have a decent amount of memory available. This will allow us to hard-wire things in
+  assembly without too much hassle. We could maybe live with 4 KiB, but 2 MiB seems to
+  be safer.
+2. We will remap, i.e. implement the paging mechanism, for our kernel later in a much
+  more sophisticated way. So 1 GiB is definitely not required.
+
+### Reserve Memory for Page Tables
+
 
 
 
 # Scratchpad/Notes
-
 
 From the AMD progammers manual, section 14.6:
 > Long mode is enabled by setting the long-mode enable control bit (EFER.LME) to 1.

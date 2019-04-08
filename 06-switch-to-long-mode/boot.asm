@@ -24,7 +24,14 @@ start:
     mov eax, cr4
     and eax, (1 << 5)
     mov cr4, eax
-    
+
+ 
     mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     mov word [0xb8002], 0x0e4b ; 'K', yellow on black
     hlt
+
+
+section .bss
+; must be page aligned
+align 4096
+
