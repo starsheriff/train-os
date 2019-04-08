@@ -46,12 +46,59 @@ is way more satisfying and robust than relying on StackOverflow or Google. My 2 
 
 
 # Disable Paging (if enabled)
-Back to business. Looks like the first thing we have to do is to disable paging. We have
-not yet talked about paging. This is a big topic and I am looking forward to it. I happen
-to know a bit about paging, so it is maybe a bit unfair if you have never heard about it.
+Back to business, the first thing we have to is to disable paging. Do disable paging,
+the manual describes, we have to set register `CR0.PG` to `0`.
 
+What does that mean exactly? 
 
+If we try to set the register `cr0` to `0` using the `mov` instruction the assembler
+raises errors:
 
+```
+$ nasm -f elf64 boot.asm -o build/boot.o
+boot.asm:19: error: invalid combination of opcode and operands
+```
+
+So, the assembler does not allow us to set the register directly. Also, the manual talks
+about `CR0.PG` and not `CR0`. So what is the `.PG` part? If we search for `CR0` we find
+the following in section _5.1.2 Page-Translation Enable Bit (PG)_:
+
+> Page translation is controlled by the PG bit in CR0 (bit 31). When CR0.PG is set to 1,
+> page translation is enabled. When CR0.PG is cleared to 0, page translation is disabled.
+
+This means we are not supposed to clear the whole register but _only_ bit 31. To do
+that, we have to temporarily store the register. We use `eax`.
+
+```
+mov eax, cr0
+```
+
+This compiles. Now we clear bit 31. To clear a bit, one generally uses a bitwise `and`
+operation where all bits you want to keep unchanged are set to `1` and all bits you want
+to clear are set to `0`. 
+
+To get that bitmap we can either manually write it out and `and` it with `eax
+
+```
+and eax, 0b1000_0000_0000_0000_0000_0000_0000_0000
+```
+
+but this is obviously _way_ to verbose. Instead, we use a bitshift `<<` with a negation:
+```
+and eax, ~(1 << 31)
+```
+This is way easier to read and write.
+
+Last, we set `cr0` to the value that we now have stored in `eax`. This time, the write
+to `cr0` works.
+
+```
+mov cr0, eax
+```
+
+Now, bit 31 of `cr0`, `cr0.pg`, is cleared.
+
+# Next
 
 
 From the AMD progammers manual, section 14.6:
