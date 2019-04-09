@@ -10,6 +10,8 @@ section .text
 ; 32-bit wide instructions
 bits 32
 
+PTE_PRESENT equ 1 << 7
+
 start:
     ; Switching to long mode
     ;
@@ -28,6 +30,10 @@ start:
     ; Step 3: Set `cr3` register
     mov eax, p4_table
     mov cr3, eax
+
+    ; Step 4: Link page table
+    ; first create a valid page table entry
+    
 
     ; Step 3: Configure 2 MiB physical pages
 

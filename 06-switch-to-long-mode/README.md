@@ -128,7 +128,7 @@ and eax, (1 << 5)
 mov cr4, eax
 ```
 
-## What did we just do?
+# What did we just do?
 So, what is this bit doing exactly? I don't know in detail. What the manual tells me though
 is that a) up intil now, the cpu was still addressing its memory using 32-bit addresses.
 This means it is physically _impossible_ to address more than 4 GiB. The processor "only"
@@ -246,8 +246,25 @@ p2_table:
     resb 4096
 ```
 
+### Set `cr3` register
 Now, we can set the `cr3` register to point to the `p4_label`. We can safely do that,
-because paging is still disabled.
+because paging is still disabled. We are still able to assemble our kernel and boot it.
+
+```assembly
+; Step 3: Set `cr3` register
+mov eax, p4_table
+mov cr3, eax
+```
+
+### Map Page Tables
+TODO: explain why the lower bits are used as flags and why that is ingenious!
+
+
+# Enable EFER.LME
+TODO
+
+# Enable Paging
+TODO
 
 
 # Scratchpad/Notes
