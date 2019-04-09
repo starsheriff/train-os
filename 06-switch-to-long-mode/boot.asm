@@ -10,6 +10,7 @@ section .text
 ; 32-bit wide instructions
 bits 32
 
+;
 PTE_PRESENT equ 1 << 7
 
 ; Flags for _large_ p2 aka. PDE page table entries
@@ -39,7 +40,28 @@ start:
     ; Step 4: Set the p2[1] entry to point to the _second_ 2 MiB frame
 	mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
 	mov [p2_table + 8], eax
-	
+
+	; Step 5: Set the 0th entry of p3 to point to our p2 table
+	mov eax, p2_table ; load the address of the p2 table
+	or eax, (PDE_PRESENT | PDE_WRITABLE)
+	mov [p3_table], eax
+
+	; Step 6: Set the 0th entry of p4 to point to our p3 table
+	mov eax, p3_table
+	or eax, (PDE_PRESENT | PDE_WRITABLE)
+	mov [p4_table], eax
+
+	; Step 7: Set EFER.LME to 1 to enable the long mode
+	mov ecx, 0xC0000080
+	rdmsr
+	or  eax, 1 << 8
+	wrmsr
+
+	; Step 8: enable paging
+	mov eax, cr0
+	or eax, 1 << 31
+	mov cr0, eax
+
 	; Step 4: Link page table
     ; first create a valid page table entry
     

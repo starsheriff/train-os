@@ -294,14 +294,62 @@ mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
 mov [p2_table + 8], eax
 ```
 
+Now, we have set entry `p2[1]` entry to point to our 2 MiB frame. This means the addresses
+`0x20_0000` to `0x3F_FFFF` (`0x20_0000 + 0x1F_FFFF = 0x3F_FFFF`) are mapped with the
+`p2[1]` page table entry.
+
+Now we have to set up the remaining mappings, i.e. the page table entries in `p4`
+and `p3`. Since all bits higher bits in the addresses we want to map are zero, the
+offsets into `p4` and `p3` are also zero. In other words, if we give the cpu an address
+within the mapped range, e.g. `0x20_0010`, it will take the _0th_ entry in `p4`, load
+`p3` from the base address stored in that page table entry, then load the _0th_ entry
+of `p3` and load `p2` from the base address in that entry. 
+
+Now, we can map all entries
+```assembly
+; Step 5: Set the 0th entry of p3 to point to our p2 table
+mov eax, p2_table ; load the address of the p2 table
+or eax, (PDE_PRESENT | PDE_WRITABLE)
+mov [p3_table], eax
+
+; Step 6: Set the 0th entry of p4 to point to our p3 table
+mov eax, p3_table
+or eax, (PDE_PRESENT | PDE_WRITABLE)
+mov [p4_table], eax
+```
+
+Now all page tables are mapped. If we now give the cpu an address in the mapped area,
+it will walk its way through the page tables, end at physical memory frame which includes
+the given address and end at the physical address exactly matching the given virtual one.
+
 TODO: explain why the lower bits are used as flags and why that is ingenious!
 
-
 # Enable EFER.LME
-TODO
+The next step, according to section 14.6.1 of the programmes manual, is to enable the
+long mode by setting `EFER.LME` to 1. But how?
+
+Well, searching the manual actually reveals a code example how to set the flag properly
+
+```assembly
+; Step 7: Set EFER.LME to 1 to enable the long mode
+mov ecx, 0xC0000080
+rdmsr
+or  eax, 1 << 8
+wrmsr
+```
 
 # Enable Paging
-TODO
+Now we can enable paging again. The process is almost identical as before when we
+disabled paging and should be well known now.
+
+```assembly
+; Step 8: enable paging
+mov eax, cr0
+or eax, 1 << 31
+mov cr0, eax
+```
+
+If we run `make run` now, qemu still boots and prints the letters `OK`, so we are good?
 
 
 # Scratchpad/Notes
