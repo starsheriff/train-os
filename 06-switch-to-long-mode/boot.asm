@@ -12,6 +12,11 @@ bits 32
 
 PTE_PRESENT equ 1 << 7
 
+; Flags for _large_ p2 aka. PDE page table entries
+PDE_PRESENT  equ 1 << 0
+PDE_WRITABLE equ 1 << 1
+PDE_LARGE    equ 1 << 7
+
 start:
     ; Switching to long mode
     ;
@@ -31,7 +36,11 @@ start:
     mov eax, p4_table
     mov cr3, eax
 
-    ; Step 4: Link page table
+    ; Step 4: Set the p2[1] entry to point to the _second_ 2 MiB frame
+	mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
+	mov [p2_table + 8], eax
+	
+	; Step 4: Link page table
     ; first create a valid page table entry
     
 

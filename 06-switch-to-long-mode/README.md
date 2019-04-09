@@ -257,6 +257,43 @@ mov cr3, eax
 ```
 
 ### Map Page Tables
+Now, it is important to keep in mind what we want to achieve in the end. We want to be
+able to map _a single_ 2 MiB page frame that where the virtual addresses are identity
+mapped to the physical addresses. I.e. virtual and physical address are the same.
+
+Mapping _a single_ page frame means we need exactly one _page table entry_ in the `p2`
+table. That entry will point to the base address of the page frame we want to map.
+This in turn means we need exactly one `p3` table with one page table entry  and 
+a single page table entry in the `p4` table.
+
+Let's further define that we want to map the first 2 MiB of the address space, i.e. the
+first page frame. This means, after the mapping we will be able to use the addresses
+`0x0000_0000_0000_0000` to `0x0000_0000_001F_FFFF`.
+// TODO: describe in octal?
+
+Then, we don't want to corrupt the currently mapped memory. Instead, let's use the
+_second_ frame starting from 2 MiB for the page we map. The base address is then
+`0x20_0000`. We have to set the correct bits of the page table entry though, bits `0` to
+`7`. Figure 5.25 shows the format of the page table entry for `p2` or `PDE` in AMD 
+nomenclature. The bits we have to set are `WRITABLE` and `PRESENT` and `LARGE`.
+
+We define these bits as constants:
+
+```assembly
+; Flags for _large_ p2 aka. PDE page table entries
+PDE_PRESENT  equ 1 << 0
+PDE_WRITABLE equ 1 << 1
+PDE_LARGE    equ 1 << 7
+```
+
+Then we can set the entry at index 1 in the p2 table in the following way:
+
+```assembly
+; Step 4: Set the p2[1] entry to point to the _second_ 2 MiB frame
+mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
+mov [p2_table + 8], eax
+```
+
 TODO: explain why the lower bits are used as flags and why that is ingenious!
 
 
