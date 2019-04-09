@@ -1,3 +1,7 @@
+# Disclaimer
+This text is still in alpha stage, it is a _write along_ while I develop the code for
+`train-os`. It is not vettet, will have logical gaps, changes in style etc. etc.
+
 # Switching to long mode
 In the last section we have made a minimal bootable kernel loaded with GRUB. We printed
 `OK` on the screen and halted the cpu.
@@ -145,16 +149,49 @@ implementation is actually quite intricate.
 Here are a few points that I missed when reading the first time about paging which I
 try to address. 
 
-...
-..
 * It is an essential part of the chips architecture. It is not something we are free to
   design/chose in software. The chip _will_ to the translation from a virtual address
   to the physical address no matter what.
-
+* TODO: more points
+* Once we activate long mode, every memory address we give the CPU _will_ inevitable be
+  processed according to this paging mechanism. There is nothing we can do about. It
+  is a _core_ component of the cpu.
+* This means _every_ address we use in our code is treated as a virtual address by the
+  cpu.
+* As a consequence, the mapping of the page tables and also their entries must be set
+  properly.
+* If the cpu in this process encounters an error, that is it cannot parse the address
+  he was using to load either another page table or read the page table entry, it will
+  cause an interrupt, the famous _page fault_.
 
 I really had to do a few passes to understand paging and get my head properly around it.
 It was also very helpful to use several different sources, usually they complement each
 other and fill each others gaps.
+
+The plan for the following steps is:
+
+1. Read about paging in the following sources:
+	a) Programmers Manual
+	b) Operating Systems Three Easy Pieces
+2. Implement a simple page table
+	a) Without dynamically mapping pages
+	b) only one 2 MiB page mapped at start
+	
+## Paging Primer
+TODO: explain essentials of the paging mechanism
+TODO: maybe drop and refer to resources instead?
+
+* 4 levels
+* page table
+* offset and indexing
+* page tables are _tree structures_!
+
+## The Plan (A very simple page table setup)
+Given that we won't take a full dive into page tables yet we implement a simple page
+table configuration.
+
+TODO: explain
+
 
 ## Identity Map Page Tables
 The next step is to set the `cr3` register with the _physical_ base address of a level
@@ -187,9 +224,30 @@ physical pages. Both flags are set using bit number 7 in the respective _page ta
 entries_. Note! `PDE` and `PDPE` are _NOT_ registers but, rather cumbersome names for
 different levels of the page tables. `PDPE` is page table level 3 and `PDE` level 2.
 
-### Reserve Memory for Page Tables
-The idea is that we utilize large page tables, 
+So, we will have to set these bits correctly when we create our page table entries.
 
+### Reserve Memory for Page Tables
+Now, we will reserve the space/bytes for the page tables we need. In our simple
+configuration where we only want to map _a single_ 2 MiB page we need to exactly one 
+`P4`, `P3` and `P2` table each.
+
+The `cr3` register will point to our single P4 table. Thus, we reserve some space for the
+`P4`, `P3` and `P2` tables. Each of them requires 4 KiB and to be page aligned.
+
+```assembly
+section .bss
+; must be page aligned
+align 4096
+p4_table:
+    resb 4096
+p3_table:
+    resb 4096
+p2_table:
+    resb 4096
+```
+
+Now, we can set the `cr3` register to point to the `p4_label`. We can safely do that,
+because paging is still disabled.
 
 
 # Scratchpad/Notes

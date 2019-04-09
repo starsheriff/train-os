@@ -25,8 +25,11 @@ start:
     and eax, (1 << 5)
     mov cr4, eax
 
+    ; Step 3: Set `cr3` register
+    mov eax, p4_table
+    mov cr3, eax
+
     ; Step 3: Configure 2 MiB physical pages
-    mov eax, pde
 
     mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     mov word [0xb8002], 0x0e4b ; 'K', yellow on black
@@ -35,4 +38,10 @@ start:
 section .bss
 ; must be page aligned
 align 4096
+p4_table:
+    resb 4096
+p3_table:
+    resb 4096
+p2_table:
+    resb 4096
 
