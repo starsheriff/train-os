@@ -351,6 +351,25 @@ mov cr0, eax
 
 If we run `make run` now, qemu still boots and prints the letters `OK`, so we are good?
 
+# Are we in long mode yet?
+The big question now is, are we in long mode yet. The long mode activation section in the
+manual did not mention any more steps. First, we can still boot our kernel prints the
+letters `OK`.
+
+What happens, if we try to load an address that is not mapped in our page table?, e.g.
+`0x40_0010` that is just a few bytes outside our mapped range. We can try to copy the
+content of that address to `eax`.
+```assembly
+
+mov eax, [0x40_0010]
+```
+
+If the cpu uses the page table, we should get a page fault trying to access this address.
+But we don't. Of course, something is missing.
+
+
+
+
 
 # Scratchpad/Notes
 

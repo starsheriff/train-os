@@ -62,6 +62,9 @@ start:
 	or eax, 1 << 31
 	mov cr0, eax
 
+	; is paging enabled now?
+	mov eax, [0xFF_FFFF]
+
 	; Step 4: Link page table
     ; first create a valid page table entry
     
