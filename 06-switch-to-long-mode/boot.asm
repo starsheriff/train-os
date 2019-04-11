@@ -4,8 +4,6 @@
 ; public so that the linker can use it.
 global start
 
-section .text
-
 ; we are still in 32-bit protected mode so we have to use
 ; 32-bit wide instructions
 bits 32
@@ -17,6 +15,9 @@ PTE_PRESENT equ 1 << 7
 PDE_PRESENT  equ 1 << 0
 PDE_WRITABLE equ 1 << 1
 PDE_LARGE    equ 1 << 7
+
+
+; GDT Flags
 
 start:
     ; Switching to long mode
@@ -30,7 +31,7 @@ start:
 
     ; Step 2: Enable Physical Address Extension
     mov eax, cr4
-    and eax, (1 << 5)
+    or eax, (1 << 5)
     mov cr4, eax
 
     ; Step 3: Set `cr3` register
@@ -40,6 +41,11 @@ start:
     ; Step 4: Set the p2[1] entry to point to the _second_ 2 MiB frame
 	mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
 	mov [p2_table + 8], eax
+
+	; point the 0th entry to the first frame
+	; TODO: explain
+	mov eax, (0x00_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
+	mov [p2_table], eax
 
 	; Step 5: Set the 0th entry of p3 to point to our p2 table
 	mov eax, p2_table ; load the address of the p2 table
@@ -63,18 +69,27 @@ start:
 	mov cr0, eax
 
 	; is paging enabled now?
-	mov eax, [0xFF_FFFF]
+	; -> No, this instruction still works
+	;mov eax, [0xFF_FFFF]
 
-	; Step 4: Link page table
-    ; first create a valid page table entry
-    
+	; Step 9: Disable Interrupts
 
-    ; Step 3: Configure 2 MiB physical pages
+	; Step 11: Enable Interrupts
 
+    lgdt [gdt64.pointer]
+    jmp gdt64.code:longstart
+   
+section .text
+bits 64
+longstart:
     mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     mov word [0xb8002], 0x0e4b ; 'K', yellow on black
+
+    ; uncomment the next line and you will have a page fault
+	;mov eax, [0xFF_FFFF]
     hlt
 
+    
 section .bss
 ; must be page aligned
 align 4096
@@ -84,4 +99,17 @@ p3_table:
     resb 4096
 p2_table:
     resb 4096
+stack_bottom:
+	resb 64
+stack_top:
+    
+section .rodata
+gdt64:
+	dq 0
+.code: equ $ - gdt64
+	dq (1 << 43) | (1 << 44) | (1 << 47) | (1 << 53)
+.pointer:
+	dw $ - gdt64 - 1 ; length of the gdt64 table
+	dq gdt64         ; addess of the gdt64 table
 
+section .text

@@ -367,9 +367,37 @@ mov eax, [0x40_0010]
 If the cpu uses the page table, we should get a page fault trying to access this address.
 But we don't. Of course, something is missing.
 
+# Surprise! We have to update the GDT
+Ok, if we continue to read the software programmers manual, we find that section 14.6.2
+talks about consistency checks, which I will ignore for now. The next section however is
+interesting, 
 
+> Immediately after activating long mode, the system-descriptor-table registers (GDTR,
+> LDTR, IDTR, TR) continue to reference legacy descriptor tables.
 
+Ok, but we wanted to use paging, and _not_ segmentation. So the GDT should not matter?!
+In the same paragraph though:
 
+> After activating long mode, 64-bit operating-system software should use the LGDT, LLDT,
+> LIDT, and LTR instructions to load the system descriptor-table registers with
+> references to the 64-bit versions of the descriptor tables. See “Descriptor Tables” on
+> page 73 for details on descriptor tables in long mode.
+
+Oh boy, there is even more
+
+> Long mode requires 64-bit interrupt-gate descriptors to be stored in the
+> interrupt-descriptor table (IDT). Software must not allow exceptions or interrupts to
+> occur between the time long mode is activated and the subsequent update of the
+> interrupt-descriptor-table register (IDTR) that establishes a reference to the 64-bit
+> IDT. 
+
+As far as I can see we have to perform three more steps:
+
+1. Disable all interrupts
+2. Update the GDT (we will have to look that up in the _Descriptor Tables_ section.
+3. Enable interrupts
+
+## Disable/Enable Interrupts
 
 # Scratchpad/Notes
 
