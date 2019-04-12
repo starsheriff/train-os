@@ -1,6 +1,14 @@
 # Disclaimer
 Read the general notes for this tutorial.
 
+## Prerequesits
+* I don't assume any knowledge of x86 or os development
+* I don't assume any knowledge or experience in systems development.
+* I *do* assume knowledge of `C`, I will not cover the language itself. This is not a
+  `C` tutorial.
+* The other aspects I will cover in great detail.
+* Everything from previous sections is assumed common knowledge now.
+
 # Jumping into `C`
 The goal for this section is to jump into `C` and print the letters `OK` from our `C`
 code. Hopefully, this is a very short section.
@@ -20,7 +28,15 @@ All we want to do now is to switch over from _assembly_ to `C` code. The goal is
 the assembly code that prints `OK` to the screen into a `C` function and call that from
 our assembly code.
 
-Let's start with the `C` file and call it `start.c`.
+Let's start with the `C` file and call it `start.c`. First, we need the base address of
+the VGA buffer we use to write the characters. We copy it from assembly
+
+```c
+char* VIDEO_ADDRESS = (char *) 0xb8000;
+```
+
+Next, we add a function with return type `void`, since we will not return from it
+(although we could). We could return, but we want to stay in `C` for our kernel.
 
 
 ## Makefile
