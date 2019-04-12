@@ -397,9 +397,29 @@ As far as I can see we have to perform three more steps:
 2. Update the GDT (we will have to look that up in the _Descriptor Tables_ section.
 3. Enable interrupts
 
-
-
 ## Disable/Enable Interrupts
+TODO:
+
+## Update GDT
+TODO: Explanation
+
+
+# Conclusion
+Whew, what a ride. The section turned out to be quite long.
+
+## Achievement
+Let's face it the code is not aesthetic at all yet. The big thing however is that we have
+managed to put together each and every line from actual AMD sources; *no shortcuts*.
+That is, at least for me, deeply satisfying.
+
+Now, when time comes and I have to boot an architeture `x`, I feel much more prepared to
+take on that ride. Also, it is much less puzzling now if you take code or tools from third
+parties since you understand what they are doing under the hood. 
+
+## Up Next
+`C`, or stack?
+
+What is next? The difficult thing is to keep an overview.
 
 # Scratchpad/Notes
 

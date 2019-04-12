@@ -36,8 +36,24 @@ char* VIDEO_ADDRESS = (char *) 0xb8000;
 ```
 
 Next, we add a function with return type `void`, since we will not return from it
-(although we could). We could return, but we want to stay in `C` for our kernel.
+(although we could). We could return, but we want to stay in `C` for our kernel. In this
+function we write the first four bytes of the VGA register with the same values as
+we did in the assembler code. Last, we add an infinite loop.
 
+```c
+void c_start() {
+    VIDEO_ADDRESS[0] = 0x4f;
+    VIDEO_ADDRESS[1] = 0x0e;
+    VIDEO_ADDRESS[2] = 0x4b;
+    VIDEO_ADDRESS[3] = 0x0e;
+
+    // loop forever
+    while (1) {
+    }
+}
+```
+That is all the code we need for now. The next step is to build, link and pack everything
+so that we get qemu to print _OK_ as before.
 
 ## Makefile
 ```
