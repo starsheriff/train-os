@@ -124,7 +124,7 @@ value from `eax` to `cr4`.
 ```assembly
 ; Step 2: Enable Physical Address Extension
 mov eax, cr4
-and eax, (1 << 5)
+or eax, (1 << 5)
 mov cr4, eax
 ```
 
@@ -396,6 +396,8 @@ As far as I can see we have to perform three more steps:
 1. Disable all interrupts
 2. Update the GDT (we will have to look that up in the _Descriptor Tables_ section.
 3. Enable interrupts
+
+
 
 ## Disable/Enable Interrupts
 
