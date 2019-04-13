@@ -59,12 +59,22 @@ That is all the code we need for now. The next step is to build, link and pack e
 so that we get qemu to print _OK_ as before.
 
 ## Compilation
+To compile `C` files, we use `gcc` from the cross-compilation toolchain we have build.
+In that way we can't accidentally include files from the standard library on our host
+system.
+```
+TARGET=x86_64-elf
+CC=$(TARGET)-gcc
+```
 
+We also add another list using wildcards to automatically compile all `C` files.
 ```
 c_source_files := $(wildcard *.c)
 c_object_files := $(patsubst %.c, $(build_dir)/%.o, $(c_source_files))
+```
 
-
+Finally, we add a make target for `C` files.
+```
 $(build_dir)/%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 ```

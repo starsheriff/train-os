@@ -4,13 +4,17 @@ linker_script=linker.d
 kernel=dist/kernel.bin
 grub_cfg=grub.cfg
 
+TARGET=x86_64-elf
+CC=$(TARGET)-gcc
+
 asm_source_files := $(wildcard *.asm)
 asm_object_files := $(patsubst %.asm, $(build_dir)/%.o, $(asm_source_files))
 
 c_source_files := $(wildcard *.c)
 c_object_files := $(patsubst %.c, $(build_dir)/%.o, $(c_source_files))
 
-CFLAGS=-ffreestanding
+# CFLAGS=-ffreestanding
+CFLAGS=
 
 clean:
 	@rm -r build
