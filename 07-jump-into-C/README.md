@@ -38,7 +38,10 @@ char* VIDEO_ADDRESS = (char *) 0xb8000;
 Next, we add a function with return type `void`, since we will not return from it
 (although we could). We could return, but we want to stay in `C` for our kernel. In this
 function we write the first four bytes of the VGA register with the same values as
-we did in the assembler code. Last, we add an infinite loop.
+we did in the assembler code. You have to pay attention with the order of the bytes,
+the endianness matters.
+
+Last, we add an infinite loop.
 
 ```c
 void c_start() {
@@ -55,7 +58,8 @@ void c_start() {
 That is all the code we need for now. The next step is to build, link and pack everything
 so that we get qemu to print _OK_ as before.
 
-## Makefile
+## Compilation
+
 ```
 c_source_files := $(wildcard *.c)
 c_object_files := $(patsubst %.c, $(build_dir)/%.o, $(c_source_files))
@@ -65,3 +69,6 @@ $(build_dir)/%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 ```
 
+
+# Next
+* inspect generated assembly code
