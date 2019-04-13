@@ -79,6 +79,6 @@ $(build_dir)/%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 ```
 
-
 # Next
 * inspect generated assembly code
+* stack
