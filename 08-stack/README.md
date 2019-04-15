@@ -59,4 +59,3 @@ Now, we want to set up the stack correctly _as soon as possible_. The reason is 
 we change the stack pointer _after_ anything has been put on the stack, we will loose
 that data and corrupt our memory. Therefore, we put it at the very beginning of 
 `boot.asm`, right after the `start` label.
-
