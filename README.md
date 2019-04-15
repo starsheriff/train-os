@@ -24,10 +24,11 @@ After that, I plan to switch over and use GRUB as a bootloader. And continue fro
 5. Use GRUB as bootloader and print `Hello World`.
 6. Switch to long mode (again).
 7. Jump into `C`, print `Hello World`.
-8. Implement VGA video driver.
-9. Handle interrupts/exceptions
-10. Implement memory paging.
-11. Remap Kernel
+8. Stack
+9. Implement VGA video driver.
+10. Handle interrupts/exceptions
+11. Implement memory paging.
+12. Remap Kernel
 
 ### Later on...
 * filesystem

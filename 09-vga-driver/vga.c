@@ -23,8 +23,6 @@ char VGA_COLOR_WHITE       = 0xf;
 const int VGA_COLUMNS = 80;
 const int VGA_ROWS    = 25;
 
-
-
 VGABuffer vga_buf = {
     0,
     (ColoredChar*) 0xb8000,
