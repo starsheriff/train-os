@@ -30,10 +30,6 @@ VGABuffer vga_buf = {
     (ColoredChar*) 0xb8000,
 };
 
-VGABuffer* vga_init() {
-    return &vga_buf;
-}
-
 /* Returns the color code given a foreground and background color.
  *
  * A color code in VGA mode is defined by a single byte where the higher bits set the
@@ -43,43 +39,56 @@ char vga_color_code(char fg, char bg) {
     return (bg << 4) | fg;
 }
 
-void vga_print(VGABuffer* b, char color_code, char* symbols) {
+void vga_print(char color_code, char* symbols) {
+    int i = 0;
+    while(symbols[i] != 0) {
+        vga_print_char(color_code, symbols[i++]);
+    }
 }
 
-void vga_print_char(VGABuffer* b, char color_code, char symbol ) {
-    // switch(symbol) {
-    //     case '\n':
-    //         vga_new_line(b);
-    //         break;
-    //     default:
-    //         break;
-    // }
-
-    
+void vga_print_char(char color_code, char symbol ) {
     if(symbol == '\n') {
         // vga_new_line(b);
-        vga_new_line(b);
+        vga_new_line();
         return;
     }
 
-    if(b->col >= VGA_COLUMNS) {
-        vga_new_line(b);
+    if(vga_buf.col >= VGA_COLUMNS) {
+        vga_new_line();
     }
 
     int row = VGA_ROWS - 1;
-    int col = b->col;
+    int col = vga_buf.col;
 
     ColoredChar c = {
         symbol,
         color_code,
     };
-    b->buf[(row*VGA_COLUMNS) + col] = c;
+    vga_buf.buf[(row*VGA_COLUMNS) + col] = c;
 
-    b->col += 1;
+    vga_buf.col += 1;
 
     return;
 }
 
-void vga_new_line(VGABuffer* b) {
+void vga_new_line() {
+    vga_buf.col = 0;
+
+    // number of characters to copy
+    int len = (VGA_ROWS-1)*VGA_COLUMNS;
+
+    for(int i=0; i<len; i++) {
+        vga_buf.buf[i] = vga_buf.buf[i+VGA_COLUMNS];
+    }
+
+    ColoredChar blank = {
+        ' ',
+        vga_color_code(VGA_COLOR_WHITE, VGA_COLOR_BLACK),
+    };
+
+    for(int i=0; i<VGA_COLUMNS; i++) {
+        vga_buf.buf[(VGA_ROWS-1)*VGA_COLUMNS + i] = blank;
+    }
+
     return;
 }

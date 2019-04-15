@@ -35,12 +35,14 @@ typedef struct {
     ColoredChar* buf;
 } VGABuffer;
 
+VGABuffer vga_buf;
+
 /* API for the VGA display */
 char vga_color_code(char fg, char bg);
-void vga_new_line(VGABuffer* b);
-VGABuffer* vga_init();
-void vga_print(VGABuffer* b, char color_code, char* symbols);
-void vga_print_char(VGABuffer* b, char color_code, char symbol);
+void vga_new_line();
+// VGABuffer* vga_init();
+void vga_print(char color_code, char* symbols);
+void vga_print_char(char color_code, char symbol);
 
 #endif // vga_h_INCLUDED
 
