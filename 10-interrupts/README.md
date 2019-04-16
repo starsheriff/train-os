@@ -43,6 +43,43 @@ would have gotten a message like
 segmentation fault: 0x400000 is not mapped
 ```
 
-## Interrupt Basics
-To do that, we have to utilize the cpus interrupts.
+This is *our goal* for this session. Make our kernel print an error message instead of
+rebooting.
+
+# Interrupt Basics
+To do that, we have to utilize the cpus interrupts. Again, I will approach the problem
+from the ground up, deriving and assemblying everything from proper sources. Btw. maybe
+this is a first peek into _why_ I am doing this. Most of the obvious tutorials that are
+available online actually don't cover this. Those that explain interrupts stay in 32-bit
+protected mode.
+
+Let's pull out the _Programmer's Manual_ again. Section 2.6 describes interrupts and
+exceptions. Already in the first paragraph we are made aware of that the mechanism for
+interrupts is different in long-mode than in 32-bit protected mode. This means it might
+be that other tutorials, using the 32-bit mode, will not work. So, we are on our own;
+unless you have a tutorial that works with long-mode.
+
+## First Overview
+From a first read, I get the following points:
+
+1. We need an `IDT`, and this `IDT` must contain 64-bit entries.
+2. 
+
+
+_CPL (Current Priviledge Level)_
+
+
+
+Wow, this looks like a bumpy ride ahead. 
+
+
+
+
+### Questions
+
+* Assembly vs. C
+* Two stacks? One stack?
+* What to put in the GDT?
+* Stack Switch?
+* `rsp` vs `esp`?
 

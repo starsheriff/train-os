@@ -1,7 +1,5 @@
 #include "vga.h"
 
-int* VIDEO_ADDRESS = (int*) 0xb8000;
-
 void c_start() {
     char color_code = vga_color_code(VGA_COLOR_YELLOW, VGA_COLOR_BLACK); 
     vga_print(color_code, "Don't panic!");
@@ -16,7 +14,7 @@ void c_start() {
     char *page_fault = (char *) 0x400000;
 
     // Assigning a value to the memory address causes a page fault.
-    *page_fault = 42;
+    // *page_fault = 42;
     
     // loop forever
     while (1) {

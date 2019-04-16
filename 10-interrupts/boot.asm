@@ -72,20 +72,20 @@ start:
 	or eax, 1 << 31
 	mov cr0, eax
 
-	; is paging enabled now?
-	; -> No, this instruction still works
-	;mov eax, [0xFF_FFFF]
 
+    ; Now we set up the IDT
+    
 	; Step 9: Disable Interrupts
 
-	; Step 11: Enable Interrupts
-
     lgdt [gdt64.pointer]
+	; Step 11: Enable Interrupts
+    
     jmp gdt64.code:longstart
    
 section .text
 bits 64
 longstart:
+    mov rsp, stack_top
     ;mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     ;mov word [0xb8002], 0x0e4b ; 'K', yellow on black
 
