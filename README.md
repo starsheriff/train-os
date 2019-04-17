@@ -86,6 +86,20 @@ After that, I plan to switch over and use GRUB as a bootloader. And continue fro
 * cross-compile some (or many) parts to an ARM processor. (I have an STM and Infineon
   board lying around unused)
 
+# Prerequesits?
+None. Seriously, don't get scared. The whole point of this tutorial is to develop all
+required knowledge from the ground up. There is only _one_ condition I assume, and that
+is that you can program decently. By decent I mean that you at least have heard about
+the stack and heap and can be productive in some language. I guess that should be enough.
+After all, we are not trying to develop the next gen mainstream os here, we are tinkering
+on a hobby level. 
+
+And one things I can assure you: Even if you will never touch this code again and will
+never write an OS. The experience _will_ change your understanding of the systems you
+are working on _deeply_. The knowledge gained from developing at kernel level spreads
+like seeds throughout your career and the insights will prove useful in the most
+unexpected moments.
+
 # Scratchpad (unorganized ideas from here on)
 
 # Ideas
