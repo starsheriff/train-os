@@ -1,3 +1,44 @@
+# Train-OS
+A training session to build an operating system. Starting from the ground up, _only_ using
+resources from _AMD_ and _Intel_. 
+
+# What is different to other tutorials?
+There are a lot of tutorials and a large part of the material I present is
+covered also there. So why bother? I especially like and got inspired by these:
+
+* phil TODO: link
+* intermezzOS: TODO: link
+
+What is different in this version? When I learn new things, I often have the
+feeling that I don't know/learn _how_ I could do what I just did completely
+on my own the next time. I don't know if it is the way I learn or just a typical
+thing that is easily omitted when writing tutorials. Here are some points I
+am wondering about regularily and that I want to address (I will probably miss
+out on other essential stuff to make up for it)
+
+* Provide some more details on _what_ points simply are _conventions_ that were
+  agreed on, what is a standard, what is architecture specific. 
+  I still remember when I first started to learn programming as a teenager I was
+  like "uuhh... how does the computer know that the function _main_ has to be
+  called first", and none of my friends or teachers new. It was just "magic".
+  These things _bother_ me, I want to uderstand where things come from...
+* Point to the standard and work from there. I won't present a _finished_ solution
+  that you just copy. We take the standard, and actually _look things up_.
+  Just as we would have to to if we would like to run the code on let's say
+  an ARM Cortex instead of your x86_64 machine. Or, framed differently, what
+  if we would be the first ones to write a tutorial, _how_ would we get that
+  bootloader going, the interrupts configured or the cpu into 64-bit mode in the first
+  place?
+* Do things twice. I'll first go barebones, this helps to understand what's
+  happening and then, we use tooling to avoid doing that ground work every time.
+* Intermediate steps and "checkpoints"
+* give an outline first -> to see the bigger picture
+* give examples into real code -> e.g. that the first kernel bin is actually
+  exactly how linux is built
+* present alternatives/choices for each `dependency` we start using. To me it's 
+  bummer if I want to follow a tutorial and a lot of external libraries do
+  the magic that I actually wanted to learn.
+
 # Outline
 A rough outline of what I want to do. Hopefully, in a more or less chronological order.
 The point is that there is so much we could possibly do that it actually is quite hard
