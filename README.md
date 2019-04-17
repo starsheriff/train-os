@@ -2,6 +2,11 @@
 A training session to build an operating system. Starting from the ground up, _only_ using
 resources from _AMD_ and _Intel_. 
 
+## __STILL IN ALPHA STAGE__
+This repository is not polished yet and still has to be regarded in alpha stage. The code
+should compile and work, but the texting is just the first draft I noted down besides
+while I was coding and researching.
+
 # What is different to other tutorials?
 There are a lot of tutorials and a large part of the material I present is
 covered also there. So why bother? I especially like and got inspired by these:
