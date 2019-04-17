@@ -86,6 +86,10 @@ section .text
 bits 64
 longstart:
     mov rsp, stack_top
+
+    ; not sure if we have to reload the lgdt once we are in 64-bit mode.
+    lgdt [gdt64.pointer]
+
     ;mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     ;mov word [0xb8002], 0x0e4b ; 'K', yellow on black
 
@@ -111,12 +115,24 @@ stack_bottom:
 stack_top:
     
 section .rodata
+
 gdt64:
 	dq 0
 .code: equ $ - gdt64
 	dq (1 << 43) | (1 << 44) | (1 << 47) | (1 << 53)
 .pointer:
 	dw $ - gdt64 - 1 ; length of the gdt64 table
-	dq gdt64         ; addess of the gdt64 table
+	dq gdt64         ; address of the gdt64 table
+
+
+; Reserve memeory for the IDT table.
+;
+; the IDT table contains 256 64-bit entries.
+; Hence, we reserve 256 double quad words (64-bit) entries.
+align 16
+idt64:
+    times 256 dq 0 ; a double quad per entry
+idt64_size equ $ - idt64 - 1
+    
 
 section .text

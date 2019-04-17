@@ -76,10 +76,11 @@ Wow, this looks like a bumpy ride ahead.
 
 
 ### Questions
-
 * Assembly vs. C
 * Two stacks? One stack?
 * What to put in the GDT?
 * Stack Switch?
 * `rsp` vs `esp`?
+* should the IDT be in a mapped page or should we reserve the bytes in assembly? Do we
+  know exactly what's happening? And, do we now the physical address in the end?
 
