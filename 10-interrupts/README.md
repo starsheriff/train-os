@@ -72,6 +72,12 @@ _CPL (Current Priviledge Level)_
 
 Wow, this looks like a bumpy ride ahead. 
 
+## LDTR and LDT
+
+The `LDTR` tells the cpu where to find. It solves two things with only using one
+register...
+
+
 
 
 

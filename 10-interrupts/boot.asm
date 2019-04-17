@@ -79,7 +79,8 @@ start:
 
     lgdt [gdt64.pointer]
 	; Step 11: Enable Interrupts
-    
+
+    cli ; disable interrupts
     jmp gdt64.code:longstart
    
 section .text
@@ -125,14 +126,16 @@ gdt64:
 	dq gdt64         ; address of the gdt64 table
 
 
-; Reserve memeory for the IDT table.
 ;
 ; the IDT table contains 256 64-bit entries.
 ; Hence, we reserve 256 double quad words (64-bit) entries.
+;
+; The IDT must be 16-bit aligned.
 align 16
-idt64:
-    times 256 dq 0 ; a double quad per entry
-idt64_size equ $ - idt64 - 1
-    
-
-section .text
+idt:
+    times 32 dq 0 ; a double quad per entry
+; Figure 4-8 shows the format of the `IDTR` in long-mode. The format is identical to the
+; format in protected mode, except the size of the base address.
+.idtr:
+    dw $ - idt - 1  ; two bytes (word), declaring the size of the IDT in bytes
+    dq idt          ; 64-bit (double quad word) base address of the idt
