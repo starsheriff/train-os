@@ -73,3 +73,4 @@ After that, I plan to switch over and use GRUB as a bootloader. And continue fro
 # Resources
 
 1. NASM Documentation https://www.nasm.us/xdoc/2.14.02/html/nasmdoc3.html
+2. [Intel Manuals](https://software.intel.com/en-us/articles/intel-sdm)
