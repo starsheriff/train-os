@@ -91,7 +91,10 @@ longstart:
     ; not sure if we have to reload the lgdt once we are in 64-bit mode.
     lgdt [gdt64.pointer]
 
+    ; load the interrupt descriptor table register. This allows the cpu to find the
+    ; interrupt descriptor table (IDT).
     lidt [idt.idtr]
+    
     ;mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     ;mov word [0xb8002], 0x0e4b ; 'K', yellow on black
 

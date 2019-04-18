@@ -49,14 +49,12 @@ void c_start() {
     return;
 }
 ```
-
-If we now try to start our kernel with qemu, it will go in a reboot loop. This is typical
-for a page fault. The question is, can we do better? Soon, we will have to implement a
-better version of our memory mapping code. This will, potentially, lead to page faults
-if we are not careful. Therefore, it would be extremely helpful to be able to print debug
+The question is, can we do better? Soon, we will have to implement a better version of
+our memory mapping code. This will, potentially, lead to page faults similar to the
+example above. Therefore, it would be extremely helpful to be able to print debug
 messages in case the cpu encounters an error.
 
-In the previous example it would have been nice if, instead of endlessly rebooting, we
+In the example it would have been nice if, instead of endlessly rebooting, we
 would have gotten a message like
 
 ```
@@ -70,10 +68,34 @@ rebooting.
 To do that, we have to utilize the cpus interrupts. Again, I will approach the problem
 from the ground up, deriving and assemblying everything from proper sources. Btw. maybe
 this is a first peek into _why_ I am doing this. Most of the obvious tutorials that are
-available online actually don't cover this. Those that explain interrupts stay in 32-bit
-protected mode.
+available online actually don't cover this. Those that explain interrupts usually stay
+in 32-bit protected mode.
 
-Let's pull out the _Programmer's Manual_ again. Section 2.6 describes interrupts and
+Let's pull out the _AMD Programmer's Manual Vol. 2_ again. The relevant sections are 1.6
+2.6, 
+
+From section 1.6 we learn
+
+> System software not only sets up the interrupt handlers, but it must also create and
+> initialize the data structures the processor uses to execute an interrupt handler when
+> an interrupt occurs.
+
+So, this gives the first hint of what we will have to do. First, we will have to
+implement the handlers for the interrupts. This one is kind of obvious. Second, we get
+told that it is _our_ responsibility to set up the relevant data structures so that
+the cpu can _find_ and _execute_ the interrupt handler as intended.
+
+The paragraph goes on, and we get a first glimp of our ride ahead...
+
+> The data structures include the code-segment descriptors for the interrupt-handler
+> software and any data-segment descriptors for data and stack accesses. Interrupt-gate
+> descriptors must also be supplied. Interrupt gates point to interrupt-handler
+> code-segment descriptors, and the entry point in an interrupt handler. Interrupt gates
+> are stored in the interrupt-descriptor table. The code-segment and data-segment
+> descriptors are stored in the global-descriptor table and, optionally, the
+> local-descriptor table. 
+
+Section 2.6 describes interrupts and
 exceptions. Already in the first paragraph we are made aware of that the mechanism for
 interrupts is different in long-mode than in 32-bit protected mode. This means it might
 be that other tutorials, using the 32-bit mode, will not work. So, we are on our own;
@@ -99,9 +121,6 @@ Wow, this looks like a bumpy ride ahead.
 The `IDTR` (_interrupt descriptor table register_)  tells the cpu where to find.
 It solves two things with only using one
 register...
-
-
-
 
 
 ### Questions
