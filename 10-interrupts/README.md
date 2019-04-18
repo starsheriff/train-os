@@ -1,7 +1,27 @@
 # Interrupts
+In this section, we are going add facilities to our kernel to handle interrupts and
+exceptions. Adding these capabilities early on is important I think, because it will
+allow us to debug our kernel much easier. 
 
 # Motivation
-TODO: cause a page fault
+Let us start by breaking our kernel, to demonstrate _why_ we want to handle interrupts.
+In section 6, when we jumped into long mode, we set up a very simple paging implementation
+and manually mapped two pages. These two pages are 2 MiB in size each and are _identity
+mapped_. That means that _virtual_ and _physical_ addresses match.
+
+If we now declare a pointer with an address _outside_ of the mapped range like this
+```c
+char *page_fault = (char *) 0x400000;
+```
+We will get a page fault when we try to access the memory. What happens is that the cpu
+takes the address and walks through page table `p4`, `p3` and `p2` which contains the
+references to our large 2 MiB frames. In the last step to find the memory frame, the cpu
+will index into the third entry of `p2`. However, we only set the first two entries in
+`p2` so the age table entry for `p2[2]` is empty. This makes the cpu fire an page fault.
+
+The full code of our `c_start` function is listed below. Since we do not handle
+interrupts yet, the cpu will simply reset itself. If we run `qemu` now, it will enter a
+restart loop.
 
 ```c
 #include "vga.h"
@@ -63,6 +83,8 @@ unless you have a tutorial that works with long-mode.
 From a first read, I get the following points:
 
 1. We need an `IDT`, and this `IDT` must contain 64-bit entries.
+2. To _use_ the `IDT` we need an _interrupt descriptor table register_ (IDTR), which
+   is identical to the `GDTR` we already set up in an earlier section.
 2. 
 
 
@@ -72,9 +94,10 @@ _CPL (Current Priviledge Level)_
 
 Wow, this looks like a bumpy ride ahead. 
 
-## LDTR and LDT
+## IDTR and LDT
 
-The `LDTR` tells the cpu where to find. It solves two things with only using one
+The `IDTR` (_interrupt descriptor table register_)  tells the cpu where to find.
+It solves two things with only using one
 register...
 
 
