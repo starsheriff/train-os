@@ -104,24 +104,57 @@ unless you have a tutorial that works with long-mode.
 ## First Overview
 From a first read, I get the following points:
 
-1. We need an `IDT`, and this `IDT` must contain 64-bit entries.
+1. We need to set up the _interrupt decriptor table_ `IDT`. This `IDT` must contain
+   64-bit entries. These entries are called either _trap-gate-_ or _interrupt-gate
+   descriptors_. There is a third option, called _task gates_ which we cannot use
+   in long-mode. See section 2.6.1 [1].
 2. To _use_ the `IDT` we need an _interrupt descriptor table register_ (IDTR), which
    is identical to the `GDTR` we already set up in an earlier section.
-2. 
+3. I don't think we need a _local descriptor table_ `LDT`. We use exclusively the `GDT`.
 
+* filter required from optional things
 
-_CPL (Current Priviledge Level)_
-
-
+* _CPL (Current Priviledge Level)_
 
 Wow, this looks like a bumpy ride ahead. 
 
-## IDTR and LDT
+## IDTR and IDT
+First, we reserve space for the IDT without initializing it. Why we do that will become
+clear in a minute. Section 4.6.5 contains all we need to know for the moment to reserve
+the required space for the IDT.
 
-The `IDTR` (_interrupt descriptor table register_)  tells the cpu where to find.
-It solves two things with only using one
+```assembly
+section .data
+align 16
+idt:
+    times 256 dq 0 ; a double quad per entry
+```
+We have to put the table in the data section since we initialize the entries with `0`
+at the moment. I am not sure if this is correct. If it turns out it is not, I will come
+back to this. Currently however, this is the best I can do.
+
+Now we can look at the `IDTR`. The `IDTR` (_interrupt descriptor table register_)  tells
+the cpu where to find the IDT and how large the table is.
+It solves two things with only using one register. Section 4.6.6 explains the register
+and Figure 4-8 specifies the format of the fields.
+
+First we have the _limit_ field, length 2 bytes, which contains the 
 register...
 
+```assembly
+.idtr:
+    dw $ - idt - 1  ; two bytes (word), declaring the size of the IDT in bytes
+    dq idt          ; 64-bit (double quad word) base address of the idt
+```
+
+### IDT Entries
+Now we have to go back to section 4.6.5
+
+> The IDT can contain only the following types of gate descriptors:
+
+Note the term _gate descriptors_. We will not find any section in the document called
+_IDT entries_ or something similar. Instead, we have to jump to section 4.8.4 _Gate
+Descriptors_ in long-mode.
 
 ### Questions
 * Assembly vs. C

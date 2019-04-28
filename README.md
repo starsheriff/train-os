@@ -1,4 +1,4 @@
-# Train-OS
+#: Train-OS
 A training session to build an operating system. Starting from the ground up, _only_ using
 resources from _AMD_ and _Intel_. 
 

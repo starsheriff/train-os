@@ -72,7 +72,6 @@ start:
 	or eax, 1 << 31
 	mov cr0, eax
 
-
     ; Now we set up the IDT
     
 	; Step 9: Disable Interrupts
@@ -80,7 +79,7 @@ start:
     lgdt [gdt64.pointer]
 	; Step 11: Enable Interrupts
 
-    cli ; disable interrupts
+    ; cli ; disable interrupts
     jmp gdt64.code:longstart
    
 section .text
@@ -97,13 +96,14 @@ longstart:
     
     ;mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     ;mov word [0xb8002], 0x0e4b ; 'K', yellow on black
+    sti
 
-	
+    ; immediately clear interupts
+    cli
+
     ; uncomment the next line and you will have a page fault
 	;mov eax, [0xFF_FFFF]
 	call c_start
-
-    hlt
 
     
 section .bss
@@ -118,7 +118,9 @@ p2_table:
 stack_bottom:
 	resb 4096
 stack_top:
-    
+
+
+
 section .rodata
 
 gdt64:
@@ -130,6 +132,7 @@ gdt64:
 	dq gdt64         ; address of the gdt64 table
 
 
+section .data
 ;
 ; the IDT table contains 256 64-bit entries.
 ; Hence, we reserve 256 double quad words (64-bit) entries.
@@ -137,7 +140,7 @@ gdt64:
 ; The IDT must be 16-bit aligned.
 align 16
 idt:
-    times 32 dq 0 ; a double quad per entry
+    times 256 dq 0 ; a double quad per entry
 ; Figure 4-8 shows the format of the `IDTR` in long-mode. The format is identical to the
 ; format in protected mode, except the size of the base address.
 .idtr:
