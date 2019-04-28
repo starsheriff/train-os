@@ -147,6 +147,15 @@ register...
     dq idt          ; 64-bit (double quad word) base address of the idt
 ```
 
+Now we have to set the IDTR.
+```assembly
+lidt [idt.idtr]
+```
+
+Now, that we have set the IDTR, the CPU knows where to look for the interrupt descriptors.
+The memory we have reserved for the IDT is still empty though. That's what I will do next,
+figure out how these entries have to look like.
+
 ### IDT Entries
 Now we have to go back to section 4.6.5
 
