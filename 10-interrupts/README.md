@@ -152,6 +152,10 @@ Now we have to set the IDTR.
 lidt [idt.idtr]
 ```
 
+If we enable intterupts now with `sti` it should work, but we get reboots. So something
+is not right. If we disable interrupts with `cli` right after, we can boot again. This
+is because we haven't set the IDT entries properly yet.
+
 Now, that we have set the IDTR, the CPU knows where to look for the interrupt descriptors.
 The memory we have reserved for the IDT is still empty though. That's what I will do next,
 figure out how these entries have to look like.
@@ -164,6 +168,12 @@ Now we have to go back to section 4.6.5
 Note the term _gate descriptors_. We will not find any section in the document called
 _IDT entries_ or something similar. Instead, we have to jump to section 4.8.4 _Gate
 Descriptors_ in long-mode.
+
+
+### Outline
+* entries
+* common handler
+
 
 ### Questions
 * Assembly vs. C

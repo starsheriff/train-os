@@ -17,6 +17,9 @@ PDE_PRESENT  equ 1 << 0
 PDE_WRITABLE equ 1 << 1
 PDE_LARGE    equ 1 << 7
 
+; number of entries in
+IDT_ENTRIES equ 32
+
 
 ; GDT Flags
 
@@ -93,17 +96,38 @@ longstart:
     ; load the interrupt descriptor table register. This allows the cpu to find the
     ; interrupt descriptor table (IDT).
     lidt [idt.idtr]
+    call init_idt
     
     ;mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     ;mov word [0xb8002], 0x0e4b ; 'K', yellow on black
     sti
 
-    ; immediately clear interupts
+    ; immediately clear interupts to avoid reboots
     cli
 
     ; uncomment the next line and you will have a page fault
 	;mov eax, [0xFF_FFFF]
 	call c_start
+
+; initialize idt
+init_idt:
+    ;
+    ;
+    ;
+    mov eax, 0
+    .lp:
+        ; todo init IDT
+        ;
+        ; 
+        inc eax
+        cmp eax, IDT_ENTRIES
+        jle .lp
+    ret
+
+; dummy handler that does _nothing_
+idt_handler:
+    iret
+    
 
     
 section .bss
