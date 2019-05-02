@@ -3,7 +3,9 @@
 ; The label start is our entry point. We have to make it
 ; public so that the linker can use it.
 global start
+global idt_handler
 extern c_start
+extern init_idt
 
 ; we are still in 32-bit protected mode so we have to use
 ; 32-bit wide instructions
@@ -103,30 +105,23 @@ longstart:
     sti
 
     ; immediately clear interupts to avoid reboots
-    cli
+    ; cli
 
     ; uncomment the next line and you will have a page fault
 	;mov eax, [0xFF_FFFF]
 	call c_start
 
-; initialize idt
-init_idt:
-    ;
-    ;
-    ;
-    mov eax, 0
-    .lp:
-        ; todo init IDT
-        ;
-        ; 
-        inc eax
-        cmp eax, IDT_ENTRIES
-        jle .lp
-    ret
 
 ; dummy handler that does _nothing_
 idt_handler:
     iret
+
+global disable_interrupts
+
+disable_interrupts:
+    cli
+    ret
+
     
 
     

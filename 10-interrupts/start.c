@@ -1,5 +1,7 @@
 #include "vga.h"
 
+extern void disable_interrupts();
+
 void c_start() {
     char color_code = vga_color_code(VGA_COLOR_YELLOW, VGA_COLOR_BLACK); 
     vga_print(color_code, "Don't panic!");
@@ -15,6 +17,8 @@ void c_start() {
 
     // Assigning a value to the memory address causes a page fault.
     // *page_fault = 42;
+
+    disable_interrupts();
     
     // loop forever
     while (1) {
