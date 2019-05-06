@@ -46,4 +46,4 @@ $(iso): $(kernel) $(grub_cfg)
 
 run: $(iso)
 	qemu-system-x86_64 $(iso)
-	
+

@@ -3,9 +3,9 @@
 ; The label start is our entry point. We have to make it
 ; public so that the linker can use it.
 global start
-global idt_handler
 extern c_start
 extern init_idt
+extern print_interrupt
 
 ; we are still in 32-bit protected mode so we have to use
 ; 32-bit wide instructions
@@ -98,11 +98,13 @@ longstart:
     ; load the interrupt descriptor table register. This allows the cpu to find the
     ; interrupt descriptor table (IDT).
     lidt [idt.idtr]
-    call init_idt
+    call init_idt ; c code
+    call populate_idt ; asm code
+
     
     ;mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     ;mov word [0xb8002], 0x0e4b ; 'K', yellow on black
-    sti
+    ; sti
 
     ; immediately clear interupts to avoid reboots
     ; cli
@@ -113,17 +115,70 @@ longstart:
 
 
 ; dummy handler that does _nothing_
+global idt_handler
 idt_handler:
-    iret
+    ; jmp $
+    call print_interrupt
+    iretq
 
 global disable_interrupts
-
 disable_interrupts:
     cli
     ret
 
-    
+global trigger_interrupt
+trigger_interrupt:
+    int 0x03
+    ret
 
+; *************************************** IDT *********************
+FLAG_INTERRUPT equ 0xe
+FLAG_R0 equ (0 << 5)    ;Rings 0 - 3
+FLAG_P equ (1 << 7)
+CODE_SEL equ 0x08
+
+GLOBAL populate_idt
+populate_idt:
+    mov eax, idt
+    mov ebx, idt_handler
+    ; or ebx, (VIRT_BASE & 0xFFFFFFFF)
+ 
+idt_init_one:
+    ; /* Target Low (word) */
+    mov ecx, ebx
+    mov word [eax], cx
+    add eax, 2
+ 
+    ; /* Code Selector (word) */
+    mov word[eax], CODE_SEL
+    add eax, 2
+ 
+    ; /* IST (byte) */
+    mov byte[eax], 0
+    add eax, 1
+ 
+    ; /* Flags (byte) */
+    mov byte[eax], (FLAG_P|FLAG_R0|FLAG_INTERRUPT)
+    add eax, 1
+ 
+    ; /* Target High (word) */
+    shr ecx, 16
+    mov word[eax], cx
+    add eax, 2
+ 
+    ; /* Long Mode Target High 32 */
+    shr ecx, 16
+    mov dword[eax], ecx ;(idt_handler >> 32)
+    add eax, 4
+ 
+    mov dword[eax], 0
+    add eax, 4
+ 
+    cmp eax, idt.idtend
+    jl idt_init_one
+ 
+    ; lidt[IDTR]
+    ret
     
 section .bss
 ; must be page aligned
@@ -150,7 +205,6 @@ gdt64:
 	dw $ - gdt64 - 1 ; length of the gdt64 table
 	dq gdt64         ; address of the gdt64 table
 
-
 section .data
 ;
 ; the IDT table contains 256 64-bit entries.
@@ -159,9 +213,10 @@ section .data
 ; The IDT must be 16-bit aligned.
 align 16
 idt:
-    times 256 dq 0 ; a double quad per entry
+    times IDT_ENTRIES dq 0 ; a double quad per entry
 ; Figure 4-8 shows the format of the `IDTR` in long-mode. The format is identical to the
 ; format in protected mode, except the size of the base address.
 .idtr:
     dw $ - idt - 1  ; two bytes (word), declaring the size of the IDT in bytes
     dq idt          ; 64-bit (double quad word) base address of the idt
+.idtend:

@@ -167,7 +167,8 @@ Now we have to go back to section 4.6.5
 
 Note the term _gate descriptors_. We will not find any section in the document called
 _IDT entries_ or something similar. Instead, we have to jump to section 4.8.4 _Gate
-Descriptors_ in long-mode.
+Descriptors_ in long-mode. This tells us what to do.
+
 
 
 ### Outline

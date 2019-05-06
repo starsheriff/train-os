@@ -1,0 +1,5 @@
+# Tell bochs to use our boot sector code as though it were
+# a floppy disk inserted into a computer at boot time .
+# floppya: 1 _44=dist/kernel.bin, status = inserted
+ata0-slave: type=cdrom, path=dist/train-os.iso, status=inserted
+boot: cdrom

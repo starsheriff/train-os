@@ -14,7 +14,7 @@ c_source_files := $(wildcard *.c)
 c_object_files := $(patsubst %.c, $(build_dir)/%.o, $(c_source_files))
 
 # CFLAGS=-ffreestanding
-CFLAGS=
+CFLAGS= -g
 
 clean:
 	@rm -r build
@@ -23,7 +23,7 @@ clean:
 $(build_dir)/%.o: %.asm
 	mkdir -p $(build_dir)
 	echo $@
-	nasm -f elf64 $< -o $@
+	nasm -g -f elf64 $< -o $@
 
 $(build_dir)/%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -46,4 +46,7 @@ $(iso): $(kernel) $(grub_cfg)
 
 run: $(iso)
 	qemu-system-x86_64 $(iso)
-	
+
+debug: $(iso)
+	qemu-system-x86_64 -s -S $(iso)
+	gdb 

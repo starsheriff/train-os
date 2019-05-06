@@ -1,6 +1,7 @@
 #include "vga.h"
 
 extern void disable_interrupts();
+extern void trigger_interrupt();
 
 void c_start() {
     char color_code = vga_color_code(VGA_COLOR_YELLOW, VGA_COLOR_BLACK); 
@@ -19,10 +20,18 @@ void c_start() {
     // *page_fault = 42;
 
     disable_interrupts();
+    trigger_interrupt();
     
     // loop forever
     while (1) {
     }
 
     return;
+}
+
+void print_interrupt() {
+    char color_code = vga_color_code(VGA_COLOR_RED, VGA_COLOR_BLACK); 
+    vga_print(color_code, "\n\nInterrupt!");
+
+    while (1) {};
 }
