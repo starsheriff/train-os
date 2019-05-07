@@ -6,6 +6,8 @@ global start
 extern c_start
 extern init_idt
 extern print_interrupt
+global idt
+global flush_idt
 
 ; we are still in 32-bit protected mode so we have to use
 ; 32-bit wide instructions
@@ -48,16 +50,16 @@ start:
     mov cr3, eax
 
     ; Step 4: Set the p2[1] entry to point to the _second_ 2 MiB frame
-	mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
-	mov [p2_table + 8], eax
+    mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
+    mov [p2_table + 8], eax
 
-	; point the 0th entry to the first frame
-	; TODO: explain
-	mov eax, (0x00_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
-	mov [p2_table], eax
+    ; point the 0th entry to the first frame
+    ; TODO: explain
+    mov eax, (0x00_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
+    mov [p2_table], eax
 
-	; Step 5: Set the 0th entry of p3 to point to our p2 table
-	mov eax, p2_table ; load the address of the p2 table
+    ; Step 5: Set the 0th entry of p3 to point to our p2 table
+    mov eax, p2_table ; load the address of the p2 table
 	or eax, (PDE_PRESENT | PDE_WRITABLE)
 	mov [p3_table], eax
 
@@ -110,8 +112,8 @@ longstart:
     ; cli
 
     ; uncomment the next line and you will have a page fault
-	;mov eax, [0xFF_FFFF]
-	call c_start
+    ;mov eax, [0xFF_FFFF]
+    call c_start
 
 
 ; dummy handler that does _nothing_
@@ -179,6 +181,11 @@ idt_init_one:
  
     ; lidt[IDTR]
     ret
+
+flush_idt:
+    mov eax, [rsp+8]
+    lidt[eax]
+    ret
     
 section .bss
 ; must be page aligned
@@ -213,6 +220,7 @@ section .data
 ; The IDT must be 16-bit aligned.
 align 16
 idt:
+    times IDT_ENTRIES dq 0 ; a double quad per entry
     times IDT_ENTRIES dq 0 ; a double quad per entry
 ; Figure 4-8 shows the format of the `IDTR` in long-mode. The format is identical to the
 ; format in protected mode, except the size of the base address.

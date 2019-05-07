@@ -8,7 +8,7 @@ typedef char u8;
 
 #define  IDT_ENTRIES 32
 
-#define CODE_SEL_64 0x08
+#define CODE_SEL 0x08
 #define FLAG_INTERRUPT  0xe
 #define FLAG_R0     (0 << 5)    // Rings 0 - 3
 #define FLAG_P      (1 << 7)
@@ -33,7 +33,8 @@ struct idt_entry_struct {
 
 typedef struct idt_entry_struct idt_entry_t;
 
-void idt_set_entry(u8 num, u64 target, u16 selector, u8 flags);
+void init_idt();
+static void idt_set_entry(u8 num, u64 target, u16 selector, u8 flags);
 
 #endif // idt_h_INCLUDED
 
