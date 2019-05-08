@@ -6,7 +6,6 @@ global start
 extern c_start
 extern init_idt
 extern print_interrupt
-global idt
 global flush_idt
 
 ; we are still in 32-bit protected mode so we have to use
@@ -100,8 +99,8 @@ longstart:
     ; load the interrupt descriptor table register. This allows the cpu to find the
     ; interrupt descriptor table (IDT).
     lidt [idt.idtr]
+    ; call populate_idt ; asm code
     call init_idt ; c code
-    call populate_idt ; asm code
 
     
     ;mov word [0xb8000], 0x0e4f ; 'O', yellow on black
@@ -183,8 +182,9 @@ idt_init_one:
     ret
 
 flush_idt:
-    mov eax, [rsp+8]
-    lidt[eax]
+    ; changed from +8 to +16
+    mov rax, [rsp+16]
+    lidt[rax]
     ret
     
 section .bss
@@ -213,12 +213,14 @@ gdt64:
 	dq gdt64         ; address of the gdt64 table
 
 section .data
+; bits 64
 ;
 ; the IDT table contains 256 64-bit entries.
 ; Hence, we reserve 256 double quad words (64-bit) entries.
 ;
 ; The IDT must be 16-bit aligned.
 align 16
+; global idt
 idt:
     times IDT_ENTRIES dq 0 ; a double quad per entry
     times IDT_ENTRIES dq 0 ; a double quad per entry

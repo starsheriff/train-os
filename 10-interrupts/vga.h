@@ -44,5 +44,7 @@ void vga_new_line();
 void vga_print(char color_code, char* symbols);
 void vga_print_char(char color_code, char symbol);
 
+#define COLORCODE_Y_ON_B vga_color_code(VGA_COLOR_YELLOW, VGA_COLOR_BLACK)
+
 #endif // vga_h_INCLUDED
 

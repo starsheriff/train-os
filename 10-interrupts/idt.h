@@ -33,8 +33,17 @@ struct idt_entry_struct {
 
 typedef struct idt_entry_struct idt_entry_t;
 
+struct idt_ptr_struct {
+    // size of the idt table
+    u16 limit;
+    // base address of the idt table
+    u64 base;
+}__attribute__((packed));
+typedef struct idt_ptr_struct idt_ptr_t;
+
 void init_idt();
 static void idt_set_entry(u8 num, u64 target, u16 selector, u8 flags);
+void memory_set(u8* s, u8 c, u64 n);
 
 #endif // idt_h_INCLUDED
 

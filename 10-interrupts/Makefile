@@ -23,7 +23,7 @@ clean:
 $(build_dir)/%.o: %.asm
 	mkdir -p $(build_dir)
 	echo $@
-	nasm -g -f elf64 $< -o $@
+	nasm -f elf64 -F dwarf -g $< -o $@
 
 $(build_dir)/%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
