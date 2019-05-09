@@ -72,9 +72,17 @@ After that, I plan to switch over and use GRUB as a bootloader. And continue fro
 7. Jump into `C`, print `Hello World`.
 8. Stack
 9. Implement VGA video driver.
+10. Interrupts (Part 1) - Tell CPU where to find handlers, in asm
+11. Interrupts (Part 2) - Move code from 10. over to c
+12. Implement better handlers
 10. Handle interrupts/exceptions
 11. Implement memory paging.
 12. Remap Kernel
+
+
+unspecified:
+* refactoring?
+* utilities (memset?)
 
 ### Later on...
 * filesystem

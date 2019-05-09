@@ -16,12 +16,12 @@ void c_start() {
     //                          0x--||||
     char *page_fault = (char *) 0x400000;
 
-    // Assigning a value to the memory address causes a page fault.
-    // *page_fault = 42;
 
     disable_interrupts();
     vga_print(color_code, "\nNow we trigger an interrupt!");
-    trigger_interrupt();
+    // trigger_interrupt();
+    // Assigning a value to the memory address causes a page fault.
+    *page_fault = 42;
     
     // loop forever
     while (1) {

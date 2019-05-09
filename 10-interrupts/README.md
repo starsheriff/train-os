@@ -46,10 +46,8 @@ void c_start() {
     // declare a pointer to a byte just outside the memory we have mapped with our two
     // 2 MiB pages. The last address we can access is 0x3f ffff.
     // 
-    // The declaration does not cause a page fault yet. We are not trying to access the
-    // memory yet.
-    // 
-    //                          0x--||||
+    // The declaration itself does not cause a page fault yet. We are not trying to
+    // read or write the memory yet.
     char *page_fault = (char *) 0x400000;
 
     // Assigning a value to the memory address causes a page fault.
@@ -74,8 +72,8 @@ would have gotten a message like
 segmentation fault: 0x400000 is not mapped
 ```
 
-This is *our goal* for this session. Make our kernel print an error message instead of
-rebooting.
+This is *our goal* for this session. Make our kernel print an (generic) error message
+instead of entering a reboot loop.
 
 # Interrupt Basics
 To do that, we have to utilize the cpus interrupts. Again, I will approach the problem
@@ -85,7 +83,7 @@ available online actually don't cover this. Those that explain interrupts usuall
 in 32-bit protected mode.
 
 Let's pull out the _AMD Programmer's Manual Vol. 2_ again. The relevant sections are 1.6
-2.6, 
+2.6, 4.6.5, 4.8.4 and the whole section 8. A lot of material.
 
 From section 1.6 we learn
 
@@ -108,13 +106,12 @@ The paragraph goes on, and we get a first glimp of our ride ahead...
 > descriptors are stored in the global-descriptor table and, optionally, the
 > local-descriptor table. 
 
-Section 2.6 describes interrupts and
-exceptions. Already in the first paragraph we are made aware of that the mechanism for
-interrupts is different in long-mode than in 32-bit protected mode. This means it might
-be that other tutorials, using the 32-bit mode, will not work. So, we are on our own;
-unless you have a tutorial that works with long-mode.
+Section 2.6 describes interrupts and exceptions. Already in the first paragraph we are
+made aware of that the mechanism for interrupts is different in long-mode than in 32-bit
+protected mode. This means it might be that other tutorials, using the 32-bit mode, will
+not work. So, we are on our own; unless you have a tutorial that works with long-mode.
 
-## First Overview
+## First Overview - Summary
 From a first read, I get the following points:
 
 1. We need to set up the _interrupt decriptor table_ `IDT`. This `IDT` must contain
@@ -130,6 +127,25 @@ From a first read, I get the following points:
 * _CPL (Current Priviledge Level)_
 
 Wow, this looks like a bumpy ride ahead. 
+
+## Generic Interrupt Handler
+The first thing we do is to create a generic _non-returning_ interrupt handler. It will
+simply print the string "Interrupt handled!" to the screen, we have achieved the goal of
+this section.
+
+```c
+//interrupt.c
+#include "vga.h"
+
+// handle_interrupt prints a generic message to the screen and does not return.
+void handle_interrupt() {
+    // print red on black
+    char color_code = vga_color_code(VGA_COLOR_RED, VGA_COLOR_BLACK);
+    vga_print(color_code, "\nInterrupt handled!");
+
+    while(1) {};
+}
+```
 
 ## IDTR and IDT
 First, we reserve space for the IDT without initializing it. Why we do that will become
@@ -202,3 +218,5 @@ Descriptors_ in long-mode. This tells us what to do.
 * debugging with gdb
 * debugging with bochs (interrupt)
 * add example errors
+* next step: make interrupt handler change a memory address or register --> bad
+  --> therefore context switching required!
