@@ -14,7 +14,7 @@ void c_start() {
     char *page_fault = (char *) 0x400000;
     
     // Assigning a value to the memory address causes a page fault.
-    *page_fault = 42;
+    // *page_fault = 42;
     
     // loop forever
     while (1) {

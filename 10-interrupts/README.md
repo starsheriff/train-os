@@ -121,6 +121,9 @@ From a first read, I get the following points:
 2. To _use_ the `IDT` we need an _interrupt descriptor table register_ (IDTR), which
    is identical to the `GDTR` we already set up in an earlier section.
 3. I don't think we need a _local descriptor table_ `LDT`. We use exclusively the `GDT`.
+4. To _handle_ the interrupts correctly we have to consider how and when the cpu pushes
+   to the stack. It looks like there are important differences between protected and long
+   mode. These, we will handle in the next section.
 
 * filter required from optional things
 
@@ -131,7 +134,7 @@ Wow, this looks like a bumpy ride ahead.
 ## Generic Interrupt Handler
 The first thing we do is to create a generic _non-returning_ interrupt handler. It will
 simply print the string "Interrupt handled!" to the screen, we have achieved the goal of
-this section.
+this section. 
 
 ```c
 //interrupt.c
@@ -147,25 +150,54 @@ void handle_interrupt() {
 }
 ```
 
-## IDTR and IDT
-First, we reserve space for the IDT without initializing it. Why we do that will become
-clear in a minute. Section 4.6.5 contains all we need to know for the moment to reserve
+Now, we have to tell the cpu to call this function whenever _any_ interrupt or exception
+occurs. Once we have achieved that, we can refine the interrupt handler.
+
+## IDT (reserve space)
+Then, we reserve space for the IDT without initializing it. Why we do that will become
+clear in a minute. Section 4.6.5 and 8.2 contain all we need to know for the moment to reserve
 the required space for the IDT.
 
+> In long mode, interrupt descriptor-table entries are 16 bytes. [p. 79]
+
+> Up to 256 unique interrupt vectors are available. [p. 216]
+
+With this information we can reserve the required space for the _idt_. In `idt.asm`, we
+declare a new `.data` section.
 ```assembly
-section .data
-align 16
+// file: idt.asm
+section .data:
+; not sure about the alignment. To be sure, I will page align the idt for now.
+align 4096
+
+; the number of available interrupts, i.e. the number of entries in the idt
+; ref section 8.2 p. 216 in AMD's programmers manual
+IDT_NUM_ENTRIES equ 256
+
+; the size of a single entry in the idt, in _long mode_, is 16 bytes.
+; ref section 4.6.5 p. 79 in AMD's programmers manual
+IDT_ENTRY_SIZE equ 16
+
+; total size in bytes required for the idt
+IDT_TOTAL_SIZE equ IDT_NUM_ENTRIES*IDT_ENTRY_SIZE
+
 idt:
-    times 256 dq 0 ; a double quad per entry
+    resb IDT_TOTAL_SIZE
 ```
+
 We have to put the table in the data section since we initialize the entries with `0`
 at the moment. I am not sure if this is correct. If it turns out it is not, I will come
 back to this. Currently however, this is the best I can do.
 
+The kernel should still run. As long as you comment the line that tries to access our
+unmapped memory in `c_start`.
+
+## IDTR
 Now we can look at the `IDTR`. The `IDTR` (_interrupt descriptor table register_)  tells
-the cpu where to find the IDT and how large the table is.
+the cpu where to find the IDT and how large the table is. 
 It solves two things with only using one register. Section 4.6.6 explains the register
-and Figure 4-8 specifies the format of the fields.
+and Figure 4-8 specifies the format of the fields. It is identical to the _global
+descriptor table register_ that we have set up already earlier.
 
 First we have the _limit_ field, length 2 bytes, which contains the 
 register...
@@ -189,7 +221,10 @@ Now, that we have set the IDTR, the CPU knows where to look for the interrupt de
 The memory we have reserved for the IDT is still empty though. That's what I will do next,
 figure out how these entries have to look like.
 
-### IDT Entries
+The kernel should still run. As long as you comment the line that tries to access our
+unmapped memory in `c_start`.
+
+### IDT Entries (Initialize IDT)
 Now we have to go back to section 4.6.5
 
 > The IDT can contain only the following types of gate descriptors:

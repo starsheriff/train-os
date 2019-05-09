@@ -201,7 +201,6 @@ stack_bottom:
 stack_top:
 
 
-
 section .rodata
 
 gdt64:
