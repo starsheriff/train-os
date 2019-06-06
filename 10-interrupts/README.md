@@ -123,7 +123,7 @@ From a first read, I get the following points:
 3. I don't think we need a _local descriptor table_ `LDT`. We use exclusively the `GDT`.
 4. To _handle_ the interrupts correctly we have to consider how and when the cpu pushes
    to the stack. It looks like there are important differences between protected and long
-   mode. These, we will handle in the next section.
+   mode. This however, will be dealt with in the next section.
 
 * filter required from optional things
 
@@ -195,12 +195,13 @@ unmapped memory in `c_start`.
 ## IDTR
 Now we can look at the `IDTR`. The `IDTR` (_interrupt descriptor table register_)  tells
 the cpu where to find the IDT and how large the table is. 
-It solves two things with only using one register. Section 4.6.6 explains the register
-and Figure 4-8 specifies the format of the fields. It is identical to the _global
-descriptor table register_ that we have set up already earlier.
-
-First we have the _limit_ field, length 2 bytes, which contains the 
-register...
+Basically, the _IDTR_ is not a complicated thing. It simply is a standardised data
+structure that allows the cpu to read relevant information with only using one register.
+The _IDTR_ contains two _fields_, the _base address_ where the IDT can be found and
+second the _limit_ as it is called in the programmers manual; the number of entries in
+the IDT. Section 4.6.6 explains the register and Figure 4-8 specifies the format of the
+fields. It is identical to the _global descriptor table register_ that we have set up
+already earlier.
 
 ```assembly
 .idtr:

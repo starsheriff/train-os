@@ -43,13 +43,13 @@ start:
     mov cr3, eax
 
     ; Step 4: Set the p2[1] entry to point to the _second_ 2 MiB frame
-	mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
-	mov [p2_table + 8], eax
+    mov eax, (0x20_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
+    mov [p2_table + 8], eax
 
-	; point the 0th entry to the first frame
-	; TODO: explain
-	mov eax, (0x00_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
-	mov [p2_table], eax
+    ; point the 0th entry to the first frame
+    ; TODO: explain
+    mov eax, (0x00_0000 | PDE_PRESENT | PDE_WRITABLE | PDE_LARGE)
+    mov [p2_table], eax
 
 	; Step 5: Set the 0th entry of p3 to point to our p2 table
 	mov eax, p2_table ; load the address of the p2 table
@@ -87,8 +87,8 @@ section .text
 bits 64
 longstart:
     ; uncomment the next line and you will have a page fault
-	;mov eax, [0xFF_FFFF]
-	call c_start
+    ;mov eax, [0xFF_FFFF]
+    call c_start
 
     hlt
 

@@ -1,3 +1,6 @@
+# NOTE:
+this is the first draft with both asm and c code working. 
+
 # Interrupts
 In this section, we are going add facilities to our kernel to handle interrupts and
 exceptions. Adding these capabilities early on is important I think, because it will
