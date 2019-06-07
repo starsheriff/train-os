@@ -165,7 +165,8 @@ the required space for the IDT.
 With this information we can reserve the required space for the _idt_. In `idt.asm`, we
 declare a new `.data` section.
 ```assembly
-// file: idt.asm
+; file: idt.asm
+
 section .data:
 ; not sure about the alignment. To be sure, I will page align the idt for now.
 align 4096
@@ -204,14 +205,20 @@ fields. It is identical to the _global descriptor table register_ that we have s
 already earlier.
 
 ```assembly
-.idtr:
+; file: idt.asm
+global idtr
+
+idtr:
     dw $ - idt - 1  ; two bytes (word), declaring the size of the IDT in bytes
     dq idt          ; 64-bit (double quad word) base address of the idt
 ```
 
 Now we have to set the IDTR.
 ```assembly
-lidt [idt.idtr]
+; file: boot.asm
+extern idtr
+
+lidt [idtr]
 ```
 
 If we enable intterupts now with `sti` it should work, but we get reboots. So something

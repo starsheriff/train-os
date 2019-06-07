@@ -4,6 +4,8 @@
 ; public so that the linker can use it.
 global start
 extern c_start
+extern idtr
+; exern idtd
 
 ; we are still in 32-bit protected mode so we have to use
 ; 32-bit wide instructions
@@ -86,6 +88,10 @@ start:
 section .text
 bits 64
 longstart:
+    ; load the interrupt descriptor table register. This allows the cpu to find the
+    ; interrupt descriptor table (IDT).
+    lidt [idtr]
+    
     ; uncomment the next line and you will have a page fault
     ;mov eax, [0xFF_FFFF]
     call c_start
