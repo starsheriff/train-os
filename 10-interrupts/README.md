@@ -221,6 +221,17 @@ extern idtr
 lidt [idtr]
 ```
 
+Now, both the space for the _idt_ is reserved, and the _idtr_ is set. The cpu now "knows"
+where to find the correct interrupt handler, or more precise the gate descriptor for any
+of the possible 256 interrupts.
+
+We have not yet initialized the idt yet. This is the next thing to do.
+
+## IDT Entries aka gate descriptors
+
+
+## Old text from here:
+
 If we enable intterupts now with `sti` it should work, but we get reboots. So something
 is not right. If we disable interrupts with `cli` right after, we can boot again. This
 is because we haven't set the IDT entries properly yet.

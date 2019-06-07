@@ -96,6 +96,8 @@ longstart:
     ;mov eax, [0xFF_FFFF]
     call c_start
 
+    sti
+
     hlt
 
     
