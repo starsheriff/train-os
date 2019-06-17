@@ -102,7 +102,6 @@ longstart:
     ; call populate_idt ; asm code
     call init_idt ; c code
 
-    
     ;mov word [0xb8000], 0x0e4f ; 'O', yellow on black
     ;mov word [0xb8002], 0x0e4b ; 'K', yellow on black
     ; sti

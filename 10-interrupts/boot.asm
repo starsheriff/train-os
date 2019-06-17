@@ -91,6 +91,9 @@ longstart:
     ; load the interrupt descriptor table register. This allows the cpu to find the
     ; interrupt descriptor table (IDT).
     lidt [idtr]
+
+    ; now we initialize the idt
+    call init_idt;
     
     ; uncomment the next line and you will have a page fault
     ;mov eax, [0xFF_FFFF]

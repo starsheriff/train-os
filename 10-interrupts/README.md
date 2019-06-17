@@ -228,6 +228,18 @@ of the possible 256 interrupts.
 We have not yet initialized the idt yet. This is the next thing to do.
 
 ## IDT Entries aka gate descriptors
+So far so good. Until now, I haven't encountered larger problems. This section though
+required a fair bit of debugging to get everything together properly. Also, the AMD
+programmer's manual was not easy to read. You have to follow a lot of references to get
+everything together.
+
+### Why not statically initialized?
+First off, why don't we simply initialize the idt in a data section statically? In
+principle we _could_ do that, but then our kernel would lack a crucial feature: changing
+interrupt handlers at runtime. The kernel _must_ be able to change the interrupt handlers.
+Therefore, we have to intitialize the idt at runtime.
+
+
 
 
 ## Old text from here:
