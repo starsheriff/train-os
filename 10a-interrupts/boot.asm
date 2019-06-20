@@ -181,7 +181,7 @@ idt_init_one:
     ret
 
 flush_idt:
-    ; changed from +8 to +16
+    ; changed from +8 to +16, that did the trick!
     mov rax, [rsp+16]
     lidt[rax]
     ret
