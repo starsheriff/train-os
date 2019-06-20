@@ -264,8 +264,60 @@ gives an overview, although it is probably hard to understand at first.
 
 From section 4.6.5, we know that the size of a single entry in _long mode_ is _always_
 16 bytes. Otherwise, there is not much to learn from that section for now. Instead, we
-can jump to section 4.8.4 _"Gate Descriptors"_. There we can see the full layout of 
-the gate descriptor we need...
+can jump to section 4.8.4 _"Gate Descriptors"_. There, we get all the information we
+need to set the entries.
+
+First, we find that the _type_ of gate descriptor, a _64-bit interrupt gate_, is of type
+`0x0E`. We need put this byte at the correct location in each entry. The full bit layout
+is shown in figure 4-24.
+
+Unfortunately the individual fields are not explained in huge detail, so we have to
+collect the information on what to use for the individual fields from other sections.
+
+### Scaffolding
+Before we set the individual fields, we have to write some scaffolding around to write
+all entries of the idt. The way I will do it here is to initialize the whole idt in a
+single pass over the memory.
+
+We need a pointer to the start of the idt. Then we will advance the pointer after we set
+each field and compare it to the address of the end of the `idt` (which is the address of
+the `idtr`.)
+
+```assembly
+; file: idt.asm
+
+init_idt:
+    ; eax is used to store the current location in memory and is advanced until the
+    ; end of the idt is reached
+    mov eax, idt
+    
+.init_single_entry:
+    ; TODO: set idt entries and advance eax register
+    ; for now, just advance by two bytes to not get stalled here
+    add eax, 2 ; advance to not get stalled
+
+    ; compare the current memory address with the end of the idt. If the address is
+    ; lower than the end, jump back and initialize another idt entry
+    cmp eax, idtr
+    jl .init_single_entry
+    
+    ret
+```
+
+Let us walk through all the fields in their order of appearance.
+
+### Target Offset [0:15]
+The first 16 bits are the _lower_ 16 bits of the target address. The target address is
+the address of our interrupt handler routine. As already explained above, for now we will
+use the same address, aka. same handler for all interrupts.
+
+To copy the _lower_ 16 bits of the idt handlers address, we can use `mov word`.
+
+```assembly
+    mov word [eax], idt_handler
+```
+
+
 
 
 
