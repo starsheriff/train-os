@@ -239,6 +239,35 @@ principle we _could_ do that, but then our kernel would lack a crucial feature: 
 interrupt handlers at runtime. The kernel _must_ be able to change the interrupt handlers.
 Therefore, we have to intitialize the idt at runtime.
 
+### Initialize IDT
+In the routine `longstart`, we call a new routine `init_idt` which we put in the file
+`idt.asm`.
+
+```assembly
+; file: boot.asm
+extern init_idt
+
+; in longstart
+call init_idt
+```
+
+In the `init_idt` routine, we have to set the entries of the idt properly. For now, we
+will _always_ call the same routine to handle the interrupt to keep things easy. There
+is enough to get going and we can easily extend our code afterwards. For now, the goal is
+simply to get the idt entries correctly set.
+
+## IDT entry layout
+First some terminology. In the programmers manual, an entry in the idt is called a _gate
+descriptor_. The term is used as a generic name for all types of entries in the different
+_descriptor tables_. There are _many_ types of gate descriptors. Table 4-6 in section 4.8.3
+gives an overview, although it is probably hard to understand at first.
+
+From section 4.6.5, we know that the size of a single entry in _long mode_ is _always_
+16 bytes. Otherwise, there is not much to learn from that section for now. Instead, we
+can jump to section 4.8.4 _"Gate Descriptors"_. There we can see the full layout of 
+the gate descriptor we need...
+
+
 
 
 

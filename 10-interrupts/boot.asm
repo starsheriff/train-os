@@ -5,6 +5,7 @@
 global start
 extern c_start
 extern idtr
+extern init_idt
 ; exern idtd
 
 ; we are still in 32-bit protected mode so we have to use
@@ -93,7 +94,7 @@ longstart:
     lidt [idtr]
 
     ; now we initialize the idt
-    call init_idt;
+    call init_idt
     
     ; uncomment the next line and you will have a page fault
     ;mov eax, [0xFF_FFFF]
