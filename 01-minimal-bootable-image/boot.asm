@@ -29,7 +29,7 @@ jmp $
 ; References:
 ; https://www.nasm.us/xdoc/2.14.02/html/nasmdoc3.html#section-3.2.5
 ; https://www.nasm.us/xdoc/2.14.02/html/nasmdoc3.html#section-3.5
-times 512-2-($-$$) db 1
+times 512-2-($-$$) db 0
 
 ; the magic bytes we have to write at position 510 and 511
 ; References:
