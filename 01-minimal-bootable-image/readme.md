@@ -2,6 +2,32 @@
 The first thing I wanted to do is to create the simplest possible code that
 we can boot on a x86 machine. 
 
+# Quickstart
+
+## Pre Requesits
+Besides standard tooling you need only a few things in order to build the
+project. Namely,
+* `nasm` the [netwide assembler](https://en.wikipedia.org/wiki/Netwide_Assembler)
+* and `qemu` to emulate a x86_64 machine.
+
+Both should be available as packages for basically every Linux distribution I
+can think of.
+
+### Compile
+```
+nasm -f bin boot.asm -o boot.img
+```
+
+### Run with `qemu`
+```
+qemu boot.img
+```
+
+### Hexdump
+```
+hexdump boot.img
+```
+
 # Result
 
 ```
