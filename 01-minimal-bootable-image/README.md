@@ -1,6 +1,32 @@
 # Creating the first bootable image
+The first thing I wanted to do is to create the simplest possible code that
+we can boot on a x86 machine. 
 
-# Things to cover (still WIP)
+# Result
+
+```
+> hexdump boot.img
+0000000 feeb 0000 0000 0000 0000 0000 0000 0000
+0000010 0000 0000 0000 0000 0000 0000 0000 0000
+*
+00001f0 0000 0000 0000 0000 0000 0000 0000 aa55
+0000200
+```
+
+
+# Conclusion
+With only a few lines of code, we have actually created a first bootable image.
+It is not doing anythin, but we have learned a few things.
+
+Besides that, RTFM(!) really. Do it. It will enlighten you and boost your
+knowledge.
+
+1. Multiboot Standard (really readable and easy to understand)
+* Intel x86 Programming Manual (pffehhw... it is gigantic, don't even attempt reading it
+  front to back. But try to find _specific_ information
+
+
+# Scratchpad (personal notes)
 
 First off we create a very simple bootable image.
 
@@ -20,12 +46,3 @@ First off we create a very simple bootable image.
   -> both produce the same machine code but use different syntax
   -> nasm is specifically for x86 architectures, so on other architectures the assembler
      from the cross-compilation toolchain must be used
-
-
-## More Information
-RTFM, really. Do it. It will enlighten you and boost your knowledge.
-
-* Multiboot Standard (really readable and easy to understand)
-* Intel x86 Programming Manual (pffehhw... it is gigantic, don't even attempt reading it
-  front to back. But try to find _specific_ information
- 
