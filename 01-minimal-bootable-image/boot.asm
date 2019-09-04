@@ -6,7 +6,8 @@
 
 ; `jmp` jumps to the given address, `$` is a shorthand notation in nasm syntax
 ; referencing to the address of the beginning of the current line
-jmp $
+;jmp $
+jmp 0x4499989
 
 ; We have to write a whole block of 512 bytes with the last two bytes being
 ; 0xaa55.
